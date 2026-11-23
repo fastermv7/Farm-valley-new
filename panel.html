@@ -1,0 +1,2814 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#203d32">
+<meta name="description" content="Ekin eking, hayvon boqing va vodiyda o‘z fermangizni quring.">
+<title>Farm Valley</title>
+<link rel="icon" href="/icon.svg" type="image/svg+xml">
+<style>:root{color-scheme:light;--ink:#253d30;--paper:#fff4d7;--line:#ddcba3;--gold:#ffd373;--green:#3d674c;font-family:system-ui,Segoe UI,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#24493c;color:var(--ink);overscroll-behavior:none}
+[hidden]{display:none!important}
+button{font:inherit;cursor:pointer;touch-action:manipulation;color:inherit}
+button:focus-visible{outline:3px solid #167ec7;outline-offset:2px}
+button:disabled{cursor:default;opacity:.57}
+#game{position:relative;width:100%;height:100%;height:100dvh;overflow:hidden;isolation:isolate;background:#89a757}
+#map{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:grab}
+#map:active{cursor:grabbing}
+.hud{position:absolute;top:max(12px,env(safe-area-inset-top));left:max(14px,env(safe-area-inset-left));right:max(14px,env(safe-area-inset-right));display:flex;align-items:center;justify-content:space-between;gap:9px;pointer-events:none}
+.hud>*{pointer-events:auto}
+.brand,.resources,.square,.lesson,.dock,.build-hint,#panel{background:var(--paper);border:1px solid #f9edcf;box-shadow:0 4px 0 #664d3270,0 6px 18px #263b2b36}
+.brand{display:flex;align-items:center;gap:8px;padding:5px 13px 5px 5px;border-radius:14px}
+.brand img{width:36px;height:36px}
+.brand strong{font:bold clamp(18px,3.5vw,27px) Georgia,serif;white-space:nowrap;letter-spacing:-.65px}
+.brand em{color:#557845}
+.resources{display:flex;align-items:center;gap:8px;border-radius:14px;padding:5px 9px 5px 5px}
+.level{height:35px;width:35px;border-radius:10px;display:grid;place-items:center;background:#49795e;color:white;font-weight:900;box-shadow:inset 0 -3px #2d533c}
+.xp{min-width:64px;font-size:12px;font-variant-numeric:tabular-nums}
+.xp div{height:6px;background:#e2d7b7;border-radius:6px;margin-top:2px;overflow:hidden}
+.xp i{display:block;height:100%;background:#71a957;border-radius:6px}
+.coin{border-left:1px solid #d7c5a1;display:flex;align-items:center;gap:5px;padding-left:8px;font-variant-numeric:tabular-nums}
+.gold{width:17px;height:17px;border-radius:50%;background:#f5bd4b;border:2px solid #d8922e;box-shadow:inset 0 0 0 2px #ffda77;display:inline-block;vertical-align:middle}
+.square{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;font-size:25px;line-height:1;padding:0}
+.square svg{width:22px;height:22px}
+.lesson{position:absolute;top:max(69px,calc(env(safe-area-inset-top) + 56px));left:max(14px,env(safe-area-inset-left));width:max-content;max-width:min(270px,58vw);border-radius:13px;padding:8px 11px;font-size:13px;display:flex;align-items:center;gap:9px}
+.lesson div{line-height:1.28}
+.lesson b{display:block;color:#4b744d;font-size:12px;margin-bottom:2px}
+.lesson button{border:0;background:#eadcb9;border-radius:8px;width:32px;height:32px;flex:none;font-size:19px}
+.map-actions{position:absolute;right:max(14px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom));display:grid;gap:7px}
+.dock{position:absolute;left:50%;bottom:max(13px,env(safe-area-inset-bottom));transform:translateX(-50%);display:flex;gap:4px;padding:4px;border-radius:17px}
+.dock button{min-width:76px;min-height:54px;display:grid;justify-items:center;align-content:center;gap:1px;border:0;background:transparent;font-size:12px;font-weight:800;border-radius:12px;padding:3px 6px}
+.dock button:hover,.dock button[aria-current=true]{background:#eadab2}
+.dock svg{width:27px;height:27px}
+#panel{position:absolute;top:max(66px,calc(env(safe-area-inset-top) + 54px));bottom:max(82px,calc(env(safe-area-inset-bottom) + 73px));right:max(14px,env(safe-area-inset-right));width:min(340px,calc(100% - 28px));border-radius:17px;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 6px 0 #5a47295c,0 10px 28px #28362265}
+.panel-top{display:flex;align-items:center;justify-content:space-between;padding:3px 8px 3px 14px;border-bottom:1px solid var(--line);background:#f0dfb9}
+.panel-top h1{font:bold 22px Georgia,serif;margin:0}
+.panel-top .square{background:transparent;box-shadow:none;border:0;width:44px;height:39px}
+.panel-body{overflow:auto;overscroll-behavior:contain;padding:9px 10px;scrollbar-color:#b5a777 #f9edce;font-size:14px}
+.panel-body p{margin:0 0 8px;line-height:1.42}
+.list-row{display:flex;align-items:center;gap:8px;min-height:48px;padding:5px 6px;margin-bottom:5px;border:1px solid #ead9b4;border-radius:10px;background:#fff9e7}
+.list-row:last-child{margin-bottom:0}
+.list-row svg{width:29px;height:29px;flex:none}
+.list-row .detail{min-width:0;flex:1}
+.list-row small{display:block;color:#55664c;font-size:12px;line-height:1.3}
+.action{border:0;background:var(--green);color:#fff9e7;border-radius:8px;min-height:40px;padding:5px 9px;font-weight:750;box-shadow:inset 0 -3px #284936;flex:none}
+.action.secondary{background:#eddab0;color:var(--ink);box-shadow:inset 0 -3px #cdb788}
+.panel-body h2{font-size:13px;margin:11px 0 5px;color:#526646}
+.build-hint{position:absolute;left:50%;transform:translateX(-50%);bottom:max(85px,calc(env(safe-area-inset-bottom) + 70px));width:max-content;max-width:93%;border-radius:10px;padding:5px 7px 5px 10px;font-size:13px;display:flex;align-items:center;gap:9px}
+.build-hint button{min-height:34px;background:#ead5ac;border:0;border-radius:7px;font-weight:700}
+#notice{position:absolute;pointer-events:none;top:58px;left:50%;transform:translateX(-50%);text-align:center;max-width:90%;width:max-content;font-size:13px;font-weight:700;z-index:4}
+#notice:not(:empty){background:#244b38;color:#fff8e4;padding:7px 12px;border-radius:9px;box-shadow:0 3px 8px #253b3a44}
+@media(max-width:540px){.brand strong{font-size:18px}.brand{padding-right:7px}.brand img{width:30px;height:30px}.hud{left:7px;right:7px}.resources{gap:5px}.xp{min-width:54px}.dock button{min-width:66px}.map-actions{right:8px;bottom:88px}.lesson{left:8px}.square{width:42px;height:42px}}
+@media(orientation:landscape) and (max-height:420px){.hud{top:max(6px,env(safe-area-inset-top))}.brand img{width:30px;height:30px}.resources{padding-block:3px}.lesson{top:54px}.dock{bottom:max(7px,env(safe-area-inset-bottom))}.dock button{min-height:47px}.dock svg{width:23px;height:23px}.map-actions{bottom:10px}.map-actions .square{height:41px}.build-hint{bottom:69px}#panel{top:54px;bottom:66px}}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+.hud>.square{flex:0 0 44px}
+@media(max-width:540px){
+  .hud{gap:6px}
+  .hud>.square{flex-basis:42px}
+  .brand{gap:5px;padding-right:7px}
+  .brand strong{font-size:16px}
+  .brand img{width:26px;height:26px}
+  .resources{padding-inline:4px}
+  .level{width:30px;height:30px}
+  .xp{min-width:44px;font-size:11px}
+  .coin{padding-left:4px}
+  .gold{width:14px;height:14px}
+}
+@media(max-width:335px){
+  .brand img{display:none}
+  .brand{padding-left:7px;min-height:36px}
+}
+
+.editor-top,.editor-bar,.preview-back{position:absolute;background:var(--paper);border:1px solid #f9edcf;border-radius:14px;box-shadow:0 4px 0 #664d3270,0 6px 18px #263b2b36}
+.editor-top{top:max(8px,env(safe-area-inset-top));left:max(8px,env(safe-area-inset-left));display:flex;gap:10px;align-items:center;padding:4px 12px 4px 4px}
+.editor-top strong{font:700 clamp(16px,4vw,21px) Georgia,serif}
+.editor-bar{left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));bottom:max(8px,env(safe-area-inset-bottom));max-width:860px;margin-inline:auto;padding:5px 7px;display:grid;gap:3px}
+.editor-bar button,.editor-top button,.preview-back,.editor-variant select{min-height:42px;border:1px solid #d9c79e;border-radius:8px;background:#fff9e7;padding:3px 8px;font-size:12px;font-weight:750}
+.editor-bar button[aria-pressed=true],.editor-bar .primary{background:var(--green);color:#fff9e7;border-color:#365842}
+.editor-status{display:flex;gap:4px;align-items:center;font-size:12px;min-height:21px}
+.editor-status span{flex:1;color:#465d46}
+.editor-status button{min-height:36px}
+.editor-tools,.editor-actions{display:flex;gap:4px;overflow-x:auto;overscroll-behavior-inline:contain;padding-bottom:3px;scrollbar-width:thin}
+.editor-tools button,.editor-actions button{flex:none;white-space:nowrap}
+.editor-variant{display:flex;align-items:center;gap:8px;font-size:12px}
+.editor-variant select{min-height:36px;max-width:75%;color:var(--ink)}
+.preview-back{top:max(12px,env(safe-area-inset-top));left:max(12px,env(safe-area-inset-left))}
+#game.editing .hud,#game.editing .dock,#game.editing #lesson,#game.editing #buildHint{display:none}
+#game.editing .map-actions{top:max(8px,env(safe-area-inset-top));bottom:auto;right:max(8px,env(safe-area-inset-right))}
+#game.editing .map-actions .square{width:40px;height:40px}
+#game.editing.previewing .map-actions{display:none}
+#game.editing #panel{top:max(62px,calc(env(safe-area-inset-top) + 53px));bottom:max(8px,env(safe-area-inset-bottom))}
+#game.editing #notice{top:max(56px,calc(env(safe-area-inset-top) + 49px))}
+.draft-form{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.draft-form input{min-width:0;flex:1;min-height:42px;border:1px solid #d9c79e;border-radius:8px;background:#fff9e7;padding:6px 8px;font:inherit}
+.draft-buttons{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+@media(orientation:portrait){
+  .dock{width:calc(100% - 16px);max-width:380px;bottom:max(9px,env(safe-area-inset-bottom))}
+  .dock button{min-width:0;flex:1}
+  .map-actions{bottom:max(85px,calc(env(safe-area-inset-bottom) + 72px))}
+  #panel{left:max(8px,env(safe-area-inset-left));right:max(8px,env(safe-area-inset-right));width:auto;top:auto;max-height:64%;bottom:max(76px,calc(env(safe-area-inset-bottom) + 67px))}
+  #game.editing #panel{max-height:none}
+  .editor-tools{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px}
+  .editor-tools button{white-space:normal;min-width:0;padding-inline:2px;line-height:1.05;overflow-wrap:anywhere}
+  .editor-actions{flex-wrap:wrap;overflow:visible}
+  .editor-actions button{flex:1}
+}
+@media(orientation:landscape) and (max-height:420px){
+  #game.editing .map-actions{display:flex}
+  .editor-bar button{min-height:35px}
+  .editor-variant select{min-height:32px}
+}
+@media(max-width:350px){
+  .brand strong{font-size:15px}
+  .editor-tools{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+.draft-row-actions{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end}
+.list-row .detail{overflow-wrap:anywhere}
+@media(max-width:380px){.draft-row-actions{max-width:80px}.draft-row-actions button{width:100%}}
+dialog{max-width:min(92vw,460px);max-height:80dvh;overflow:auto;border:2px solid #8c9472;border-radius:14px;background:#fff6de;color:#304331;padding:18px}dialog label{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:6px 0}dialog input[type=number]{width:6em;padding:6px}dialog button,.pause button{padding:9px 12px;border-radius:9px;background:#355d43;color:white;border:0;margin:4px}dialog pre{white-space:pre-wrap}.pause{margin:20vh auto;text-align:center;background:#fff2d1;padding:20px}
+</style>
+</head>
+<body>
+<main id="game" aria-label="Farm Valley">
+<canvas id="map" aria-label="Ferma xaritasi"></canvas>
+<header class="hud">
+  <div class="brand"><img src="/icon.svg" alt=""><strong>Farm <em>Valley</em></strong></div>
+  <div class="resources">
+    <div class="level" id="level" aria-label="Daraja"></div>
+    <div class="xp"><b id="xp"></b><div><i id="bar"></i></div></div>
+    <div class="coin"><span class="gold"></span><b id="coins"></b></div>
+  </div>
+  <button id="settings" class="square" aria-label="Sozlamalar" title="Sozlamalar"></button>
+</header>
+<div id="lesson" class="lesson"></div>
+<div id="buildHint" class="build-hint" hidden><span id="placementText"></span><button id="cancel">Bekor qilish</button></div>
+<div id="notice" role="status"></div>
+<div class="map-actions" aria-label="Xaritani boshqarish">
+  <button id="plus" class="square" aria-label="Kattalashtirish">+</button>
+  <button id="minus" class="square" aria-label="Kichraytirish">−</button>
+  <button id="home" class="square" aria-label="Ferma markaziga qaytish"></button>
+</div>
+<nav class="dock" aria-label="Ferma menyusi">
+  <button data-view="fields" data-icon="wheat">Dala</button>
+  <button data-view="orders" data-icon="orders">Buyurtmalar</button>
+  <button data-view="barn" data-icon="barn">Ombor</button>
+  <button data-view="shop" data-icon="shop">Do‘kon</button>
+</nav>
+<div id="editorTop" class="editor-top" hidden>
+  <button id="editorBack">Chiqish</button><strong>Xarita muharriri</strong>
+</div>
+<section id="editorBar" class="editor-bar" aria-label="Xarita muharriri" hidden></section>
+<button id="previewBack" class="preview-back" hidden>Muharrirga qaytish</button>
+<input id="jsonFile" type="file" accept=".json,application/json" hidden>
+<aside id="panel" hidden aria-labelledby="panelTitle">
+  <div class="panel-top"><h1 id="panelTitle"></h1><button id="close" class="square" aria-label="Yopish">×</button></div>
+  <div id="panelBody" class="panel-body"></div>
+</aside>
+</main>
+<script>const ADMIN_VIEW=true;
+'use strict';
+
+const FarmData = (() => {
+  const crops = {
+    wheat: { name: 'Bug‘doy', duration: 12, level: 1, sale: 3 },
+    corn: { name: 'Makkajo‘xori', duration: 25, level: 2, sale: 5 },
+    carrot: { name: 'Sabzi', duration: 40, level: 3, sale: 7 },
+    pumpkin: { name: 'Qovoq', duration: 60, level: 4, sale: 10 }
+  };
+  const items = {
+    ...crops, flour: { name: 'Un', sale: 6 }, egg: { name: 'Tuxum', sale: 8 }, milk: { name: 'Sut', sale: 13 },
+    wool: { name: 'Jun', sale: 17 }, bread: { name: 'Non', sale: 12 },
+    feed: { name: 'Yem', sale: 4 }
+  };
+  const buildings = {
+    field: { name: 'Dala', price: 15, level: 1, description: 'Ekin ekish uchun yer' },
+    chicken: { name: 'Tovuqxona', price: 65, level: 1, recipe: { feed: 1 }, output: 'egg', count: 2, duration: 25 },
+    bakery: { name: 'Nonvoyxona', price: 75, level: 1, recipe: { flour: 1 }, output: 'bread', count: 1, duration: 20 },
+    windmill: { name: 'Un tegirmoni', price: 95, level: 1, recipe: { wheat: 2 }, output: 'flour', count: 1, duration: 22 },
+    mill: { name: 'Yem tegirmoni', price: 85, level: 1, recipe: { wheat: 1 }, output: 'feed', count: 3, duration: 18 },
+    cow: { name: 'Molxona', price: 95, level: 2, recipe: { feed: 1 }, output: 'milk', count: 2, duration: 40 },
+    sheep: { name: 'Qo‘yxona', price: 130, level: 3, recipe: { feed: 1 }, output: 'wool', count: 2, duration: 55 },
+    flowers: { name: 'Gulzor', price: 18, level: 1, description: 'Ferma bezagi' },
+    tree: { name: 'Mevali daraxt', price: 25, level: 1, description: 'Ferma bezagi' },
+    fence: { name: 'Yog‘och panjara', price: 12, level: 1, description: 'Ferma bezagi' }
+  };
+  const orders = [
+    { id: 'tea', name: 'Choyxona', need: { wheat: 3 }, coins: 24, xp: 10, level: 1 },
+    { id: 'breakfast', name: 'Nonushta', need: { egg: 2, bread: 1 }, coins: 42, xp: 14, level: 1 },
+    { id: 'market', name: 'Bozor savati', need: { corn: 3, wheat: 1 }, coins: 44, xp: 16, level: 2 },
+    { id: 'dairy', name: 'Sut do‘koni', need: { milk: 2, bread: 1 }, coins: 58, xp: 18, level: 2 },
+    { id: 'garden', name: 'Sabzavot savati', need: { carrot: 3, corn: 2 }, coins: 65, xp: 21, level: 3 },
+    { id: 'weaver', name: 'To‘quvchi', need: { wool: 2 }, coins: 67, xp: 23, level: 3 },
+    { id: 'autumn', name: 'Kuzgi bozor', need: { pumpkin: 3, carrot: 1 }, coins: 90, xp: 30, level: 4 }
+  ];
+  const expansions = [
+    { name: 'Sharqiy yaylov', price: 100, level: 2, x: 11, y: 4 },
+    { name: 'Janubiy bog‘', price: 170, level: 3, x: 5, y: 11 }
+  ];
+  const initialObjects = [
+    ...[4, 5].flatMap(y => [3, 4, 5].map(x => ({ kind: 'field', x, y }))),
+    { kind: 'house', x: 4, y: 2 }, { kind: 'bakery', x: 7, y: 4 },
+    { kind: 'mill', x: 8, y: 3 }, { kind: 'chicken', x: 8, y: 6 },
+    { kind: 'barn', x: 3, y: 8 }, { kind: 'orders', x: 6, y: 8 },
+    { kind: 'flowers', x: 2, y: 3 }, { kind: 'fence', x: 4, y: 8 },
+    {kind:'windmill',x:2,y:6}, {kind:'cow',x:9,y:5}, {kind:'sheep',x:7,y:8}
+  ];
+  function zone(x, y) {
+    if (x >= 10 && x <= 13 && y >= 2 && y <= 9) return 1;
+    if (x >= 2 && x <= 9 && y >= 10 && y <= 13) return 2;
+    return x >= 2 && x <= 9 && y >= 2 && y <= 9 ? 0 : -1;
+  }
+  function path(x, y) {
+    return (y === 7 && x >= 2 && x <= 9) || (x === 6 && y >= 2 && y <= 7)
+      || (y === 3 && x >= 4 && x <= 8);
+  }
+  const caps = { house:10, barn:11, chicken:5, sheep:5, cow:5, bakery:5, windmill:10, mill:10 };
+  const plots = [6,8,10,13,16,20,24,29,34,40];
+  return { caps, plots, crops, items, buildings, orders, expansions, initialObjects, zone, path };
+})();
+
+'use strict';
+
+const FarmWorld = (() => {
+  const min = 0;
+  const max = 47;
+  const key = (x, y) => x + ',' + y;
+  const inBounds = (x, y) => Number.isInteger(x) && Number.isInteger(y) &&
+    x >= min && y >= min && x <= max && y <= max;
+  const validKey = value => {
+    if (typeof value !== 'string' || !/^\d{1,2},\d{1,2}$/.test(value)) return false;
+    const [x, y] = value.split(',').map(Number);
+    return inBounds(x, y) && key(x, y) === value;
+  };
+  const kinds = Object.freeze({
+    ...Object.fromEntries(Object.entries(FarmData.buildings).map(([id, building]) => [id, building.name])),
+    house: 'Ferma uyi', barn: 'Ombor', orders: 'Buyurtmalar taxtasi', rock: 'Tosh'
+  });
+  const essential = new Set(['house', 'barn', 'orders']);
+  const empty = () => ({ tiles: {}, areas: [] });
+  const clone = value => JSON.parse(JSON.stringify(value));
+  const record = value => value && typeof value === 'object' && !Array.isArray(value);
+  const ordered = value => Object.fromEntries(Object.entries(value).sort(([a], [b]) => a.localeCompare(b)));
+
+  function parse(value) {
+    if (!record(value) || !record(value.tiles) || !Array.isArray(value.areas)) throw Error('Xarita formati xato.');
+    const tiles = {};
+    for (const [cell, type] of Object.entries(value.tiles)) {
+      if (!validKey(cell) || !['grass', 'road', 'water'].includes(type)) throw Error('Xaritada yaroqsiz katak bor.');
+      tiles[cell] = type;
+    }
+    if (value.areas.length > (max + 1) ** 2 || !value.areas.every(validKey)) throw Error('Yangi hudud koordinatasi xato.');
+    return { tiles: ordered(tiles), areas: [...new Set(value.areas)].sort() };
+  }
+
+  function wild(x,y){
+    const lake=((x-28)/7)**2+((y-19)/5)**2 < 1;
+    const channel=x>=30 && Math.abs(y-(19+Math.sin(x*.31)*2))<1.4;
+    return lake || channel ? 'water' : 'grass';
+  }
+  const ground = (map,x,y) => map.tiles[key(x,y)] || (FarmData.path(x,y)?'road':wild(x,y));
+  const areaIndex = new WeakMap();
+  function containsArea(areas,cell){
+    let set=areaIndex.get(areas);
+    if(!set || set.size!==areas.length){set=new Set(areas);areaIndex.set(areas,set);}
+    return set.has(cell);
+  }
+  const open = (map, zones, x, y) => inBounds(x, y) &&
+    (Boolean(zones[FarmData.zone(x, y)]) || containsArea(map.areas,key(x, y)));
+  const buildable = (map, zones, x, y) => open(map, zones, x, y) && ground(map, x, y) === 'grass';
+
+  function layout(state) {
+    return state.objects.map(({ id, kind, x, y }) => ({ id, kind, x, y })).sort((a, b) => a.id - b.id);
+  }
+  function fingerprint(state) {
+    return JSON.stringify([parse(state.landscape), layout(state)]);
+  }
+  function draft(state) {
+    return { format: 'farm-valley-map', version: 1, base: fingerprint(state),
+      landscape: clone(state.landscape), objects: layout(state) };
+  }
+  function parseDraft(value) {
+    if (value?.format !== 'farm-valley-map' || value.version !== 1 ||
+        typeof value.base !== 'string' || value.base.length > 250000 ||
+        !Array.isArray(value.objects) || value.objects.length > (max + 1) ** 2) {
+      throw Error('Farm Valley xarita fayli kerak.');
+    }
+    const landscape = parse(value.landscape);
+    const ids = new Set();
+    const cells = new Set();
+    const objects = value.objects.map(o => {
+      if (!record(o) || !Number.isSafeInteger(o.id) || !o.id || !Object.hasOwn(kinds, o.kind) ||
+          !inBounds(o.x, o.y) || ids.has(o.id) || cells.has(key(o.x, o.y))) {
+        throw Error('Xaritada noma’lum obyekt yoki ustma-ust joylashgan katak bor.');
+      }
+      ids.add(o.id);
+      cells.add(key(o.x, o.y));
+      return { id: o.id, kind: o.kind, x: o.x, y: o.y };
+    });
+    return { format: value.format, version: 1, base: value.base, landscape, objects };
+  }
+  function checkDraft(map, state) {
+    if (map.base !== fingerprint(state)) map = mergeDraft(map, state);
+    const live = new Map(state.objects.map(o => [o.id, o]));
+    const kept = new Set(map.objects.map(o => o.id));
+    if (!map.objects.some(o => o.kind === 'field')) throw Error('Fermada kamida bitta dala qolishi kerak.');
+    for (const old of state.objects) {
+      if (!kept.has(old.id) && (essential.has(old.kind) || old.ready || old.crop)) {
+        throw Error(kinds[old.kind] + ' ishlayotgani yoki ferma uchun zarurligi sababli o‘chirilmaydi.');
+      }
+    }
+    for (const o of map.objects) {
+      const old = live.get(o.id);
+      if ((o.id > 0 && old?.kind !== o.kind) || (o.id < 0 && essential.has(o.kind))) {
+        throw Error('Xaritada saqlangan fermaga mos kelmaydigan obyekt bor.');
+      }
+      const samePlace = old?.x === o.x && old.y === o.y;
+      if (samePlace && ground(map.landscape, o.x, o.y) === ground(state.landscape, o.x, o.y) &&
+          open(map.landscape, state.zones, o.x, o.y)) continue;
+      if (!buildable(map.landscape, state.zones, o.x, o.y)) {
+        throw Error(kinds[o.kind] + ' ochiq va quruq katakda joylashishi kerak.');
+      }
+    }
+    return map;
+  }
+
+  function mergeDraft(map, state) {
+    let base;
+    try {
+      const [landscape, objects] = JSON.parse(map.base);
+      base = parseDraft({ ...map, landscape, objects });
+      if (base.objects.some(o => o.id < 1)) throw Error();
+    } catch { throw Error('Qoralamaning boshlang‘ich xaritasi yaroqsiz.'); }
+    const conflict = () => Error('Qoralama va joriy ferma bir joyda o‘zgargan. Joylashuvni tekshiring yoki yangi qoralama oching.');
+    const landscape = clone(state.landscape);
+    const baseObjects = new Map(base.objects.map(o => [o.id, o]));
+    const edited = new Map(map.objects.map(o => [o.id, o]));
+    const current = new Map(layout(state).map(o => [o.id, o]));
+    const same = (a, b) => a === b || (a && b && a.kind === b.kind && a.x === b.x && a.y === b.y);
+    for (const [id, old] of baseObjects) {
+      const next = edited.get(id);
+      const live = current.get(id);
+      if (same(next, old) || same(next, live)) continue;
+      if (!same(live, old)) throw conflict();
+      if (next) current.set(id, next);
+      else current.delete(id);
+    }
+    for (const [id, next] of edited) {
+      if (id < 0) current.set(id, next);
+      else if (!baseObjects.has(id)) throw conflict();
+    }
+    for (const cell of new Set([...Object.keys(base.landscape.tiles), ...Object.keys(map.landscape.tiles)])) {
+      const old = base.landscape.tiles[cell];
+      const next = map.landscape.tiles[cell];
+      const live = landscape.tiles[cell];
+      if (next === old || next === live) continue;
+      if (live !== old) throw conflict();
+      if (next) landscape.tiles[cell] = next;
+      else delete landscape.tiles[cell];
+    }
+    const areas = new Set(landscape.areas);
+    for (const cell of base.landscape.areas) if (!map.landscape.areas.includes(cell)) areas.delete(cell);
+    for (const cell of map.landscape.areas) if (!base.landscape.areas.includes(cell)) areas.add(cell);
+    landscape.areas = [...areas];
+    return parseDraft({ ...map, base: fingerprint(state), landscape, objects: [...current.values()] });
+  }
+
+  return { min, max, key, inBounds, kinds, essential, empty, clone, record, parse, ground, open,
+    wild, buildable, draft, parseDraft, checkDraft };
+})();
+
+'use strict';
+
+const FarmSave = (() => {
+  const KEY = 'farm-valley-save-v1';
+  const PREVIOUS = 'farm-valley-save-v2-previous';
+  const safeInt = value => Number.isSafeInteger(value) && value >= 0;
+  const positive = value => Number.isSafeInteger(value) && value > 0;
+
+  function parse(value) {
+    if (!FarmWorld.record(value) || ![1, 2, 3].includes(value.version) || !safeInt(value.coins) ||
+        !safeInt(value.xp) || !positive(value.nextId) || !Array.isArray(value.objects) ||
+        !FarmWorld.record(value.inventory) || !FarmWorld.record(value.orderReady) ||
+        !Array.isArray(value.zones) || value.zones.length !== 3 || value.zones[0] !== true ||
+        !value.zones.every(flag => typeof flag === 'boolean') ||
+        !safeInt(value.lesson) || value.lesson > 4 || typeof value.sound !== 'boolean' || typeof value.motion !== 'boolean') {
+      throw Error('O‘yin progressi fayli yaroqsiz.');
+    }
+    const landscape = value.version >= 2 ? FarmWorld.parse(value.landscape) : FarmWorld.empty();
+    const inventory = {};
+    for (const [kind, count] of Object.entries(value.inventory)) {
+      if (!Object.hasOwn(FarmData.items, kind) || !safeInt(count)) throw Error('Ombor ma’lumoti yaroqsiz.');
+      inventory[kind] = count;
+    }
+    const orderReady = {};
+    for (const [id, ready] of Object.entries(value.orderReady)) {
+      if (!FarmData.orders.some(order => order.id === id) || !safeInt(ready)) throw Error('Buyurtma ma’lumoti yaroqsiz.');
+      orderReady[id] = ready;
+    }
+    const ids = new Set();
+    const cells = new Set();
+    const presentKinds = new Set();
+    const objects = value.objects.map(o => {
+      if (!FarmWorld.record(o) || !positive(o.id) || o.id >= value.nextId || ids.has(o.id) ||
+          !Object.hasOwn(FarmWorld.kinds, o.kind) || !FarmWorld.open(landscape, value.zones, o.x, o.y) ||
+          cells.has(FarmWorld.key(o.x, o.y)) || FarmWorld.ground(landscape, o.x, o.y) === 'water') {
+        throw Error('Saqlangan obyekt joylashuvi yaroqsiz.');
+      }
+      ids.add(o.id);
+      cells.add(FarmWorld.key(o.x, o.y));
+      presentKinds.add(o.kind);
+      const clean = { id: o.id, kind: o.kind, x: o.x, y: o.y };
+      if (FarmData.caps[o.kind]) {
+        clean.rank = o.rank ?? 1;
+        if (!positive(clean.rank) || clean.rank > FarmData.caps[o.kind]) throw Error('Bino darajasi xato.');
+      }
+      if (o.kind === 'field' && o.crop !== undefined) {
+        if (!Object.hasOwn(FarmData.crops, o.crop) || !safeInt(o.started) || !positive(o.ready) || o.ready <= o.started) {
+          throw Error('Ekin taymeri yaroqsiz.');
+        }
+        Object.assign(clean, { crop: o.crop, started: o.started, ready: o.ready });
+      } else if (o.ready !== undefined) {
+        if (!FarmData.buildings[o.kind]?.output || !positive(o.ready)) throw Error('Ishlab chiqarish taymeri yaroqsiz.');
+        clean.ready = o.ready;
+        if(o.batch!==undefined) {
+          if(!positive(o.batch)||o.batch>10000)throw Error('Mahsulot miqdori xato.');
+          clean.batch=o.batch;
+        }
+      }
+      return clean;
+    });
+    if (![...FarmWorld.essential, 'field'].every(kind => presentKinds.has(kind))) throw Error('Fermaning zarur obyektlari yetishmaydi.');
+    const c = value.camera;
+    const camera = c && [c.x, c.y, c.zoom].every(Number.isFinite) && c.zoom >= .68 && c.zoom <= 2.45 ?
+      { x: c.x, y: c.y, zoom: c.zoom } : { x: -12, y: 229, zoom: 1 };
+    const skins = value.skins ?? [0], skin = value.skin ?? 0;
+    if (!Array.isArray(skins) || !skins.includes(0) || !skins.includes(skin) ||
+        skins.some(n => !Number.isInteger(n) || n < 0 || n > 3)) throw Error('Fermer kiyimi xato.');
+    const farmer = value.farmer || {x:6,y:7};
+    if (!FarmWorld.inBounds(farmer.x,farmer.y)) throw Error('Fermer joyi xato.');
+    const published=value.published?FarmWorld.parse(value.published):null;
+    return { version: 3, published, skins:[...new Set(skins)], skin, farmer:{x:farmer.x,y:farmer.y}, coins: value.coins, xp: value.xp, inventory, objects,
+      nextId: value.nextId, zones: [...value.zones], orderReady, lesson: value.lesson,
+      sound: value.sound, motion: value.motion, lowQuality: value.lowQuality === true, landscape, camera };
+  }
+
+  function create(storage) {
+    let previousRaw = null;
+    let primaryRaw;
+    let recovered = false;
+    let problem = false;
+    function load() {
+      for (const key of [KEY, PREVIOUS]) {
+        try {
+          const raw = storage?.getItem(key);
+          if (key === KEY) primaryRaw = raw;
+          if (!raw) continue;
+          const state = parse(JSON.parse(raw));
+          previousRaw = raw;
+          recovered = key === PREVIOUS;
+          return state;
+        } catch { problem = true; }
+      }
+      return null;
+    }
+    function write(state) {
+      if (!storage) return false;
+      try {
+        const raw = JSON.stringify(state);
+        if (storage.getItem(KEY) !== primaryRaw) return false;
+        if (raw === previousRaw && !recovered) return true;
+        if (previousRaw !== null) {
+          try { storage.setItem(PREVIOUS, previousRaw); } catch { /* Primary may still fit. */ }
+        }
+        storage.setItem(KEY, raw);
+        previousRaw = primaryRaw = raw;
+        recovered = false;
+        return true;
+      } catch { return false; }
+    }
+    const state = load();
+    return { state, write, recovered, damaged: !state && problem };
+  }
+  return { parse, create };
+})();
+
+'use strict';
+
+const FarmModel = (() => {
+  const data = FarmData;
+  
+  const LEVELS = [0, 18, 58, 115, 200, 310, 465, 660, 900, 1200];
+  const clone = obj => JSON.parse(JSON.stringify(obj));
+  function fresh() {
+    return {
+      version: 3, published:null, skins:[0], skin:0, farmer:{x:6,y:7}, coins: 85, xp: 0, inventory: { wheat: 6, feed: 2 },
+      objects: data.initialObjects.map((o, i) => ({ ...o, id: i + 1 })),
+      nextId: data.initialObjects.length + 1, zones: [true, false, false],
+      orderReady: {}, lesson: 0, sound: true, motion: true, lowQuality: false,
+      landscape: FarmWorld.empty(), camera: { x: -12, y: 229, zoom: 1 }
+    };
+  }
+
+  function create(storage, clock = Date.now) {
+    const store = FarmSave.create(storage);
+    const state = store.state || fresh();
+    let pendingSave = Boolean(store.state && (store.recovered));
+    let saved = !store.damaged;
+
+    const houseRank = () => state.objects.find(o => o.kind === 'house')?.rank || 1;
+    const capacity = () => 80 + 25 * ((state.objects.find(o => o.kind === 'barn')?.rank || 1) - 1);
+    const skinPrices = [0,80,180,350];
+    function dress(n) {
+      if (!Number.isInteger(n) || !(n in skinPrices)) return fail('Kiyim topilmadi.');
+      if (!state.skins.includes(n)) {
+        if (state.coins < skinPrices[n]) return fail('Tanga yetarli emas.');
+        state.coins -= skinPrices[n]; state.skins.push(n);
+      }
+      state.skin = n;
+      return commit('Fermer kiyimi tanlandi.');
+    }
+    function walkTo(x,y) {
+      if (!FarmWorld.open(state.landscape,state.zones,x,y) || at(x,y) || FarmWorld.ground(state.landscape,x,y)==='water') return;
+      state.farmer = {x,y}; pendingSave = true; save();
+    }
+    function quote(o) {
+      const next = (o.rank || 1) + 1;
+      const gate = Math.min(10,next);
+      const cost = next * (FarmData.upgradePrices?.[o.kind] || (o.kind==='house' ? 45 : 24));
+      return {next,gate,cost,allowed:next <= data.caps[o.kind] && state.coins >= cost &&
+        (o.kind==='house' ? level() : houseRank()) >= gate};
+    }
+    function upgrade(id) {
+      const o=object(id);
+      if (!o || !data.caps[o.kind]) return fail('Bino topilmadi.');
+      const q=quote(o);
+      if (!q.allowed) return fail('Daraja yoki tanga yetarli emas.');
+      if (o.kind==='house') {
+        const need=Math.max(0,data.plots[q.next-1]-state.objects.filter(o=>o.kind==='field').length);
+        const slots=[];
+        const candidates=[];
+        for(let y=2;y<=FarmWorld.max;y++) for(let x=2;x<=FarmWorld.max;x++)
+          candidates.push({x,y,d:(x-4)**2+(y-5)**2});
+        candidates.sort((a,b)=>a.d-b.d || a.y-b.y || a.x-b.x);
+        for(const {x,y} of candidates) {
+          if(slots.length>=need)break;
+          if ((state.farmer.x===x && state.farmer.y===y) || at(x,y) || FarmWorld.ground(state.landscape,x,y)!=='grass') continue;
+          slots.push({x,y});
+        }
+        if(slots.length<need) return fail('Bo‘sh yer yetarli emas.');
+        for(const pos of slots) {
+          const cell=FarmWorld.key(pos.x,pos.y);
+          if(!FarmWorld.open(state.landscape,state.zones,pos.x,pos.y)) state.landscape.areas.push(cell);
+          state.objects.push({...pos,kind:'field',id:state.nextId++});
+        }
+        const edge=8+q.next*2;
+        const opened=new Set(state.landscape.areas);
+        for(let y=4;y<=edge;y++) for(let x=4;x<=edge;x++){
+          const cell=FarmWorld.key(x,y);
+          if(!state.zones[data.zone(x,y)] && !opened.has(cell) && FarmWorld.wild(x,y)!=='water')
+            state.landscape.areas.push(cell);
+        }
+      }
+      state.coins -= q.cost; o.rank=q.next;
+      return commit('Bino '+q.next+'-darajaga ko‘tarildi.');
+    }
+    function level() {
+      return LEVELS.filter(threshold => state.xp >= threshold).length;
+    }
+    const quantity = name => state.inventory[name] || 0;
+    const used = () => Object.values(state.inventory).reduce((sum, count) => sum + count, 0);
+    const has = recipe => Object.entries(recipe).every(([key, count]) => quantity(key) >= count);
+    const object = id => state.objects.find(o => o.id === id);
+    const at = (x, y) => state.objects.find(o => o.x === x && o.y === y);
+    const isFree = (x, y) => !(state.farmer.x===x && state.farmer.y===y) && FarmWorld.buildable(state.landscape, state.zones, x, y) && !at(x, y);
+    function change(recipe, sign) {
+      for (const [key, count] of Object.entries(recipe)) state.inventory[key] = quantity(key) + count * sign;
+    }
+    function save() {
+      if (pendingSave) {
+        saved = store.write(state);
+        pendingSave = !saved;
+      }
+      return saved;
+    }
+    function commit(message, xp = 0) {
+      const before = level();
+      state.xp += xp;
+      pendingSave = true;
+      return { ok: true, saved: save(), message, raised: level() > before };
+    }
+    const fail = message => ({ ok: false, message });
+    function plant(id, key) {
+      const plot = object(id);
+      const crop = data.crops[key];
+      if (!plot || plot.kind !== 'field' || plot.crop || !crop) return fail('Ekish uchun bo‘sh dala kerak.');
+      if (level() < crop.level) return fail('Bu ekin hali ochilmagan.');
+      if (!quantity(key)) return fail('Urug‘ qolmadi. Do‘kondan olishingiz mumkin.');
+      const now = clock();
+      change({ [key]: 1 }, -1);
+      plot.crop = key;
+      plot.started = now;
+      plot.ready = now + crop.duration * 1000;
+      if (state.lesson === 0) state.lesson = 1;
+      return commit(crop.name + ' ekildi.');
+    }
+    function harvest(id) {
+      const plot = object(id);
+      if (plot?.kind !== 'field' || !plot.crop || clock() < plot.ready) return fail('Hosil hali pishmagan.');
+      if (used() + 3 > capacity()) return fail('Omborda 3 ta bo‘sh joy kerak.');
+      const key = plot.crop;
+      change({ [key]: 3 }, 1);
+      delete plot.crop;
+      delete plot.started;
+      delete plot.ready;
+      if (state.lesson <= 1) state.lesson = 2;
+      return commit(data.items[key].name + ' +3  ·  XP +3', 3);
+    }
+    function produce(id) {
+      const building = object(id);
+      const recipe = data.buildings[building?.kind];
+      if (!recipe?.output || building.ready) return fail('Bu yerda ishlab chiqarish band.');
+      if (!has(recipe.recipe)) return fail('Kerakli masalliq omborda yetarli emas.');
+      change(recipe.recipe, -1);
+      building.batch=recipe.count;
+      building.ready = clock() + Math.round(recipe.duration * 1000 / (1 + .1*((building.rank || 1)-1)));
+      return commit(recipe.name + ' ishga tushdi.');
+    }
+    function collect(id) {
+      const building = object(id);
+      const recipe = data.buildings[building?.kind];
+      if (!recipe?.output || !building.ready || clock() < building.ready) return fail('Mahsulot hali tayyor emas.');
+      const count=building.batch || recipe.count;
+      if (used() + count > capacity()) return fail('Omborda joy yetarli emas.');
+      change({ [recipe.output]: count }, 1);
+      delete building.ready; delete building.batch;
+      return commit(data.items[recipe.output].name + ' +' + count + '  ·  XP +5', 5);
+    }
+    function fulfill(id) {
+      const order = data.orders.find(entry => entry.id === id);
+      if (!order || level() < order.level || (state.orderReady[id] || 0) > clock()) return fail('Buyurtma hali ochilmagan.');
+      if (!has(order.need)) return fail('Buyurtma uchun mahsulot yetarli emas.');
+      change(order.need, -1);
+      state.coins += order.coins;
+      state.orderReady[id] = clock() + 45000;
+      if (state.lesson === 2) state.lesson = 3;
+      return commit('+' + order.coins + ' tanga  ·  XP +' + order.xp, order.xp);
+    }
+    function sell(key) {
+      if (!Object.hasOwn(data.items, key) || !quantity(key)) return fail('Mahsulot qolmadi.');
+      change({ [key]: 1 }, -1);
+      state.coins += data.items[key].sale;
+      return commit('+' + data.items[key].sale + ' tanga');
+    }
+    function seedPrice(key) {
+      const sale = data.crops[key].sale;
+      if (key === 'wheat' && state.coins < sale && !quantity(key) &&
+          !state.objects.some(o => o.crop === key)) return 0;
+      return sale;
+    }
+    function buySeed(key) {
+      if (!Object.hasOwn(data.crops, key) || level() < data.crops[key].level) return fail('Bu urug‘ hali ochilmagan.');
+      const price = seedPrice(key);
+      if (state.coins < price) return fail('Tanga yetarli emas.');
+      if (used() >= capacity()) return fail('Omborda joy qolmadi.');
+      state.coins -= price;
+      change({ [key]: 1 }, 1);
+      return commit(data.crops[key].name + ' urug‘i olindi.');
+    }
+    function build(kind, x, y) {
+      if (!Object.hasOwn(data.buildings, kind)) return fail('Bu buyum do‘konda yo‘q.');
+      const entry = data.buildings[kind];
+      if(kind==='field' && state.objects.filter(o=>o.kind==='field').length >= data.plots[houseRank()-1]) return fail('Ko‘proq dala uchun fermer uyini yaxshilang.');
+      if (level() < entry.level || state.coins < entry.price) return fail('Daraja yoki tanga yetarli emas.');
+      if (!isFree(x, y)) return fail('Belgilanadigan bo‘sh yerga bosing.');
+      state.coins -= entry.price;
+      state.objects.push({ id: state.nextId++, kind, x, y });
+      if (state.lesson === 3) state.lesson = 4;
+      return commit(entry.name + ' joylashtirildi.');
+    }
+    function move(id, x, y) {
+      const entry = object(id);
+      if (!entry || !Object.hasOwn(data.buildings, entry.kind) || !isFree(x, y)) return fail('Bo‘sh yerga bosing.');
+      entry.x = x;
+      entry.y = y;
+      return commit('Joy o‘zgartirildi.');
+    }
+    function expand(index) {
+      const entry = data.expansions[index];
+      if (!entry || state.zones[index + 1] || level() < entry.level || state.coins < entry.price) {
+        return fail('Hudud hali ochilmagan yoki tanga yetarli emas.');
+      }
+      state.coins -= entry.price;
+      state.zones[index + 1] = true;
+      return commit(entry.name + ' ochildi.', 6);
+    }
+    function setting(key, value) {
+      if (!['sound', 'motion', 'lesson', 'lowQuality'].includes(key)) return fail('Bunday sozlama yo‘q.');
+      state[key] = value;
+      return commit('');
+    }
+    function setCamera(x, y, zoom) {
+      const previous = state.camera;
+      if (previous.x === x && previous.y === y && previous.zoom === zoom) return saved;
+      state.camera = { x, y, zoom };
+      pendingSave = true;
+      return save();
+    }
+    function restore(backup) {
+      try {
+        const next = FarmSave.parse(backup);
+        if (!store.write(next)) return fail('Zaxirani brauzerda saqlab bo‘lmadi.');
+        Object.assign(state, next);
+        saved = true;
+        pendingSave = false;
+        return { ok: true, saved: true, message: 'O‘yin zaxiradan tiklandi.' };
+      } catch (error) { return fail(error.message); }
+    }
+    function applyDraft(input) {
+      try {
+        const map = FarmWorld.checkDraft(FarmWorld.parseDraft(input), state);
+        let nextId = state.nextId;
+        const objects = map.objects.map(o => {
+          const old = o.id > 0 ? object(o.id) : null;
+          return old ? { ...old, x: o.x, y: o.y } : { ...o, id: nextId++ };
+        });
+        const next = { ...state, nextId, objects, landscape: map.landscape };
+        if (!store.write(next)) return fail('Xarita va progressni brauzerda saqlab bo‘lmadi.');
+        Object.assign(state, next);
+        saved = true;
+        pendingSave = false;
+        return { ok: true, saved: true, message: 'Xarita shu fermaga qo‘llandi.' };
+      } catch (error) { return fail(error.message); }
+    }
+    function syncWorld(map) {
+      try {
+        const land=FarmWorld.parse(map.landscape);
+        const next=clone(state);
+        if(!store.state){
+          next.objects=map.objects.map(o=>({...o}));
+          next.nextId=Math.max(...next.objects.map(o=>o.id))+1;
+          next.landscape=land;next.zones=[...map.zones];
+        }else {
+          // Personal objects and explicit local terrain take precedence on existing farms.
+          const previous=state.published || FarmWorld.empty();
+          for(const k of new Set([...Object.keys(previous.tiles),...Object.keys(land.tiles)])){
+            const t=land.tiles[k];
+            const [x,y]=k.split(',').map(Number);
+            if(at(x,y) || next.landscape.tiles[k]!==previous.tiles[k])continue;
+            if(t)next.landscape.tiles[k]=t;
+            else delete next.landscape.tiles[k];
+          }
+          next.landscape.areas=[...new Set([...next.landscape.areas,...land.areas])];
+        }
+        next.published=land;
+        const valid=FarmSave.parse(next);
+        if(JSON.stringify(next)!==JSON.stringify(state) && store.write(valid))Object.assign(state,valid);
+      }catch{/* Ignore a map incompatible with this save. */}
+    }
+    const snapshot = () => clone(state);
+    const read = () => state;
+    return {
+      read, snapshot, syncWorld, save, setCamera, restore, applyDraft, store, level, quantity, used, has, object, at, isFree,
+      plant, harvest, produce, collect, fulfill, sell, seedPrice, buySeed, build, move, expand, setting,
+      levels: LEVELS, quote, upgrade, dress, skinPrices, walkTo, get capacity() { return capacity(); }
+    };
+  }
+  return { create };
+})();
+
+'use strict';
+const FarmProfiles=(()=>{
+  const current=()=>localStorage.getItem('farm-profile')||'';
+  function store(){
+    const id=current();
+    if(!id)return localStorage;
+    return {getItem:k=>localStorage.getItem('fv:'+id+':'+k),setItem:(k,v)=>localStorage.setItem('fv:'+id+':'+k,v)};
+  }
+  function choose(){
+    const name=prompt('Ferma profilining nomi (asosiy ferma uchun bo‘sh qoldiring):',current());
+    if(name===null)return;
+    if(name.trim().length>40){alert('Nom 40 belgidan oshmasin.');return;}
+    localStorage.setItem('farm-profile',name.trim());location.reload();
+  }
+  return {store,choose,current};
+})();
+
+'use strict';
+const FarmTraveler = (() => {
+  function create(model) {
+    const state=model.read();
+    let steps=[], origin={...state.farmer}, started=0, tending=0, task=null;
+    const walkable=(x,y)=> FarmWorld.open(state.landscape,state.zones,x,y) &&
+      FarmWorld.ground(state.landscape,x,y)!=='water' && !model.at(x,y);
+    function settle(){
+      if(walkable(state.farmer.x,state.farmer.y))return;
+      let nearest=null,dist=Infinity;
+      for(let y=0;y<=FarmWorld.max;y++)for(let x=0;x<=FarmWorld.max;x++){
+        const d=Math.abs(x-state.farmer.x)+Math.abs(y-state.farmer.y);
+        if(d<dist&&walkable(x,y)){nearest={x,y};dist=d;}
+      }
+      if(nearest){steps=[];origin=nearest;model.walkTo(nearest.x,nearest.y);}
+    }
+    function route(dest, near=false,work=null) {
+      settle();
+      const start=state.farmer;
+      const queue=[start], parent=new Map([[FarmWorld.key(start.x,start.y),null]]);
+      for(let i=0;i<queue.length;i++) {
+        const p=queue[i];
+        if(Math.abs(p.x-dest.x)+Math.abs(p.y-dest.y)===(near?1:0)) {
+          const path=[];
+          for(let v=p; v!==start; v=parent.get(FarmWorld.key(v.x,v.y))) path.push(v);
+          steps=path.reverse(); origin={...start}; started=Date.now();
+          task=work; tending=work?started+steps.length*230+850:0;
+          return true;
+        }
+        for(const [dx,dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+          const x=p.x+dx,y=p.y+dy,k=FarmWorld.key(x,y);
+          if(!parent.has(k)&&walkable(x,y)) {parent.set(k,p);queue.push({x,y});}
+        }
+      }
+      return false;
+    }
+    function position(now) {
+      settle();
+      while(steps.length && now-started>=230) {
+        const p=steps.shift();
+        if(!walkable(p.x,p.y)){steps=[];break;}
+        model.walkTo(p.x,p.y); origin=p; started+=230;
+      }
+      if(!steps.length) return {...state.farmer,bob:now<tending?Math.sin(now/95)*2:0,task:now<tending?task:null};
+      const t=Math.min(1,Math.max(0,(now-started)/230)),p=steps[0];
+      return {x:origin.x+(p.x-origin.x)*t,y:origin.y+(p.y-origin.y)*t,bob:Math.abs(Math.sin(t*Math.PI))*2};
+    }
+    return {route,position};
+  }
+  return {create};
+})();
+
+'use strict';
+const Village = (() => {
+  const atlas=new Image(), tower=new Image();
+  atlas.src='/assets/village.webp'; tower.src='/assets/tower.webp';
+  const lake=new Image();
+  lake.src='/assets/lakeside.webp';
+  let painting;
+  function shore(c,v,w){
+    const pos={x:0,y:-130};
+    const left=pos.x-750,top=pos.y-140;
+    if(w.x<left || v.x>left+1500 || w.y<top || v.y>top+235 || !lake.complete || !lake.naturalWidth)return;
+    if(!painting){
+      painting=document.createElement('canvas');
+      painting.width=900;painting.height=450;
+      const brush=painting.getContext('2d');
+      brush.drawImage(lake,0,0,lake.naturalWidth,lake.naturalHeight*.27,0,0,900,450);
+      brush.globalCompositeOperation='destination-in';
+      for(const vertical of [false,true]){
+        const mask=brush.createLinearGradient(0,0,vertical?0:900,vertical?450:0);
+        mask.addColorStop(0,'transparent');mask.addColorStop(.15,'black');mask.addColorStop(.84,'black');mask.addColorStop(1,'transparent');
+        brush.fillStyle=mask;brush.fillRect(0,0,900,450);
+      }
+    }
+    c.drawImage(painting,left,top,1500,235);
+  }
+  function sprite(c,row,col,x,y,w,h) {
+    if(!atlas.complete || !atlas.naturalWidth) return false;
+    c.drawImage(atlas,col*104,row*112,104,112,x-w/2,y-h,w,h);
+    return true;
+  }
+  function building(c,o) {
+    const rank=o.rank||1;
+    if(o.kind==='barn' && rank===11 && tower.complete && tower.naturalWidth) {
+      c.drawImage(tower,-45,-97,90,102); return true;
+    }
+    const row={house:0,barn:1,bakery:2}[o.kind];
+    if(row===undefined) return false;
+    const size=(o.kind==='barn'?76:87)+rank*1.25;
+    const ok=sprite(c,row,rank-1,0,9,size,size);
+    if(ok && o.kind==='house' && rank===8) {
+      FarmArt.oval(c,-26,1,7,4,'#70b9bc');
+      FarmArt.line(c,[[-26,1],[-26,-6]],'#d7f1de',2);
+    }
+    return ok;
+  }
+  function outskirts(c,v,w,land,occupied) {
+    const corners=[[v.x,v.y],[v.x,w.y],[w.x,v.y],[w.x,w.y]].map(([x,y])=>FarmArt.inverse(x,y));
+    const xs=corners.map(p=>p.x),ys=corners.map(p=>p.y);
+    for(let y=Math.max(0,Math.min(...ys)-2);y<=Math.min(47,Math.max(...ys)+2);y++)
+      for(let x=Math.max(0,Math.min(...xs)-2);x<=Math.min(47,Math.max(...xs)+2);x++){
+        if(x<18&&y<18)continue;
+        const p=FarmArt.project(x,y);
+        if(p.x<v.x-50||p.x>w.x+50||p.y<v.y-30||p.y>w.y+70)continue;
+        c.save();c.translate(p.x,p.y);
+        const lake=FarmWorld.wild(x,y)==='water';
+        FarmArt.tile(c,lake?'#6dbabb':['#91ad58','#8cab55','#8baa56'][(x*17+y*13)%3],1.016);
+        if(lake && !land.tiles[FarmWorld.key(x,y)]) {
+          if(FarmWorld.wild(x+1,y)!=='water'||FarmWorld.wild(x,y+1)!=='water'){
+            for(let i=0;i<5;i++){
+              const bx=i*3-6;
+              FarmArt.line(c,[[bx,5],[bx-3,0],[bx-4,-7-i%3*2]],'#708542',1.4);
+            }
+          }
+          if(x===28 && y===19){
+            FarmArt.oval(c,0,0,23,8,'#497f7d',-.3);
+            FarmArt.oval(c,0,-3,22,7,'#80573a',-.3);
+            FarmArt.oval(c,0,-4,18,4,'#bc9160',-.3);
+            FarmArt.line(c,[[-8,-9],[9,3]],'#e3c08d',2.4);
+          }
+        }
+        if(lake && (x+y)%4===0) FarmArt.line(c,[[-10,0],[5,-1],[16,0]],'#a7dbcc',1);
+        if(!lake && !occupied.has(FarmWorld.key(x,y)) && !land.tiles[FarmWorld.key(x,y)] && (x*31+y*29)%13===1){
+          FarmArt.tree(c,.55+(x%4)*.08,(x+y)%3,false);
+        }
+        c.restore();
+      }
+  }
+  return {sprite,building,outskirts,shore};
+})();
+
+'use strict';
+
+const FarmEditor = (() => {
+  const STORAGE_KEY = 'farm-valley-editor-v1';
+  const LIMIT = 8;
+  const world = FarmWorld;
+  const copy = world.clone;
+  const tools = [
+    ['pan', 'Surish'], ['select', 'Tanlash'], ['grass', 'O‘t'], ['road', 'Yo‘l'],
+    ['water', 'Suv'], ['tree', 'Daraxt'], ['rock', 'Tosh'], ['building', 'Bino'],
+    ['decor', 'Bezak'], ['area', 'Hudud'], ['erase', 'O‘chirgich']
+  ];
+  const names = Object.fromEntries(tools);
+  const decorations = ['flowers', 'tree', 'rock', 'fence'];
+  const buildings = Object.keys(FarmData.buildings).filter(kind => !decorations.includes(kind));
+  const escape = value => String(value).replace(/[&<>"']/g, char =>
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[char]);
+
+  function create(storage, state) {
+    let data = { active: null, drafts: [] };
+    let loadError = false;
+    try {
+      const raw = storage?.getItem(STORAGE_KEY);
+      if (raw) {
+        const value = JSON.parse(raw);
+        if (!Array.isArray(value.drafts)) throw Error('Qoralamalar buzilgan.');
+        data = { active: value.active && world.parseDraft(value.active), drafts: value.drafts.slice(0, LIMIT).map(entry => {
+          if (typeof entry.name !== 'string' || !entry.name.trim() || entry.name.length > 48) throw Error('Qoralama nomi xato.');
+          return { name: entry.name, map: world.parseDraft(entry.map) };
+        }) };
+      }
+    } catch { loadError = true; }
+
+    let map = data.active || world.draft(state);
+    let before = null;
+    let previous = [];
+    let future = [];
+    let tool = 'pan';
+    let building = 'field';
+    let decor = 'flowers';
+    let selected = null;
+    let moving = false;
+
+    function save() {
+      if (!storage) return false;
+      try {
+        storage.setItem(STORAGE_KEY, JSON.stringify(data));
+        return true;
+      } catch { return false; }
+    }
+    function finish() {
+      if (!before) return null;
+      const old = before;
+      before = null;
+      if (JSON.stringify(old) === JSON.stringify(map)) { map = old; return null; }
+      previous.push(old);
+      if (previous.length > 35) previous.shift();
+      future = [];
+      data.active = map;
+      return save();
+    }
+    function begin() {
+      if (!before) {
+        before = map;
+        map = copy(map);
+      }
+    }
+    function cancel() {
+      if (before) map = before;
+      before = null;
+    }
+    function history(from, to) {
+      if (!from.length) return null;
+      to.push(map);
+      map = from.pop();
+      data.active = map;
+      selected = null;
+      moving = false;
+      return save();
+    }
+    function replace(next, persistActive = true) {
+      map = next;
+      before = null;
+      data.active = persistActive ? map : null;
+      previous = [];
+      future = [];
+      selected = null;
+      moving = false;
+      return save();
+    }
+    function start() {
+      if (!data.active) map = world.draft(state);
+    }
+    function draftSave(name) {
+      name = name.trim();
+      if (!name || name.length > 48) return 'Qoralamaga 1–48 belgidan iborat nom kiriting.';
+      if (!data.drafts.some(entry => entry.name === name) && data.drafts.length === LIMIT) return '8 ta qoralama saqlangan. Avval bittasini o‘chiring.';
+      const drafts = data.drafts;
+      data.drafts = [{ name, map: copy(map) }, ...drafts.filter(entry => entry.name !== name)];
+      data.active = map;
+      if (save()) return '';
+      data.drafts = drafts;
+      return 'Qoralamani brauzerda saqlab bo‘lmadi.';
+    }
+    function draftDelete(index) {
+      const drafts = data.drafts;
+      data.drafts = drafts.filter((_, i) => i !== index);
+      if (save()) return true;
+      data.drafts = drafts;
+      return false;
+    }
+    function choose(next) {
+      if (!Object.hasOwn(names, next)) return;
+      tool = next;
+      moving = false;
+      if (tool !== 'select') selected = null;
+    }
+    function variant(kind) {
+      if (tool === 'building' && buildings.includes(kind)) building = kind;
+      if (tool === 'decor' && decorations.includes(kind)) decor = kind;
+    }
+    const brush = () => !['pan', 'select'].includes(tool);
+    const target = () => map.objects.find(o => o.id === selected);
+    const at = (x, y) => map.objects.find(o => o.x === x && o.y === y);
+
+    function remove(o) {
+      const live = state.objects.find(entry => entry.id === o.id);
+      if (world.essential.has(o.kind) || live?.ready || live?.crop ||
+          o.kind === 'field' && map.objects.filter(entry => entry.kind === 'field').length <= 1) {
+        return 'Zarur obyektni yoki band dala/binoni o‘chirib bo‘lmaydi.';
+      }
+      map.objects = map.objects.filter(entry => entry.id !== o.id);
+      if (selected === o.id) selected = null;
+      return '';
+    }
+
+    function edit(x, y) {
+      if (tool === 'pan') return '';
+      if (!world.inBounds(x, y)) return 'Xarita chegarasi.';
+      const object = at(x, y);
+      const cell = world.key(x, y);
+      const land = map.landscape;
+      if (tool === 'select') {
+        if (!moving) {
+          selected = object?.id ?? null;
+          return '';
+        }
+        if (object?.id === selected) { moving = false; return ''; }
+        if (object || !world.buildable(land, state.zones, x, y)) return 'Ko‘chirish uchun ochiq, bo‘sh o‘tli katak kerak.';
+        const row = target();
+        if (row) Object.assign(row, { x, y });
+        moving = false;
+        return '';
+      }
+      if (tool === 'erase') {
+        if (object) return remove(object);
+        if (Object.hasOwn(land.tiles, cell)) delete land.tiles[cell];
+        else if (land.areas.includes(cell)) land.areas = land.areas.filter(area => area !== cell);
+        else if (FarmData.path(x, y)) land.tiles[cell] = 'grass';
+        return '';
+      }
+      if (tool === 'area') {
+        if (!land.areas.includes(cell)) land.areas.push(cell);
+        return '';
+      }
+      if (['grass', 'road', 'water'].includes(tool)) {
+        if (object && tool !== 'grass') return 'Avval bu katakdagi obyektni ko‘chiring.';
+        land.tiles[cell] = tool;
+        return '';
+      }
+      if (object) return 'Bu katak band.';
+      if (!world.buildable(land, state.zones, x, y)) return 'Ochiq o‘tli katak kerak. Yer ochish uchun Hudud vositasidan foydalaning.';
+      const kind = tool === 'building' ? building : tool === 'decor' ? decor : tool;
+      const id = Math.min(0, ...map.objects.map(o => o.id)) - 1;
+      map.objects.push({ id, kind, x, y });
+      return '';
+    }
+
+    function toolbar() {
+      const options = tool === 'building' ? buildings : tool === 'decor' ? decorations : [];
+      const variantKey = tool === 'building' ? building : decor;
+      const object = target();
+      const hint = moving ? 'Yangi ochiq katakni bosing' : object ?
+        world.kinds[object.kind] + ' · ' + (object.x + 1) + ', ' + (object.y + 1) :
+        tool === 'pan' ? 'Xaritani bir barmoq bilan suring' : tool === 'select' ?
+          'Obyekt katagini bosing' : 'Katakka bosing yoki barmoqni torting';
+      return '<div class="editor-status"><span>' + hint + '</span>' + (object ?
+        '<button data-editor="move">Ko‘chirish</button><button data-editor="remove">O‘chirish</button>' : '') + '</div>' +
+        (options.length ? '<label class="editor-variant">' + names[tool] + '<select aria-label="Obyekt turi">' +
+          options.map(kind => '<option value="' + kind + '"' + (kind === variantKey ? ' selected' : '') + '>' +
+            world.kinds[kind] + '</option>').join('') + '</select></label>' : '') +
+        '<div class="editor-tools" aria-label="Xarita vositalari">' + tools.map(([key, title]) =>
+          '<button data-tool="' + key + '" aria-pressed="' + (key === tool) + '">' + title + '</button>').join('') + '</div>' +
+        '<div class="editor-actions" aria-label="Xarita amallari">' +
+          '<button data-editor="undo"' + (previous.length ? '' : ' disabled') + '>Qaytarish</button>' +
+          '<button data-editor="redo"' + (future.length ? '' : ' disabled') + '>Tiklash</button>' +
+          '<button data-editor="preview">Ko‘rib chiqish</button><button data-editor="drafts">Qoralamalar</button>' +
+          '<button data-editor="apply" class="primary">Fermaga qo‘llash</button></div>';
+    }
+
+    return { read: () => map, start, begin, finish, cancel, edit, choose, variant, brush, target, toolbar,
+      tool: () => tool, active: () => Boolean(data.active), loadError,
+      undo: () => history(previous, future), redo: () => history(future, previous),
+      moving: () => { moving = Boolean(target()); }, isMoving: () => moving,
+      remove: () => target() ? remove(target()) : '',
+      reset: () => replace(world.draft(state)), clearWorking: () => replace(world.draft(state), false),
+      import: value => replace(world.parseDraft(value)),
+      draftSave, draftDelete,
+      draftLoad: index => data.drafts[index] ? replace(copy(data.drafts[index].map)) : null,
+      drafts: () => data.drafts.map(({ name }) => escape(name))
+    };
+  }
+  return { create };
+})();
+
+'use strict';
+function management(state,editor){
+  const form=document.createElement('dialog');
+  const config=window.farmConfig;
+  form.innerHTML='<form method="dialog"><button>Yopish</button></form><h2>Dunyo sozlamalari</h2><label><input type="checkbox" id="service"> Texnik xizmat</label><p>Yaxshilash narxi = asosiy narx × yangi daraja</p><div id="rates"></div><h3>Mahsulot sotuv narxlari</h3><div id="productRates"></div><h3>Ishlab chiqarish vaqti (soniya)</h3><div id="durations"></div><h3>Bir partiyadagi dona</h3><div id="yields"></div><button id="saveRates">Sozlamalarni saqlash</button><hr><button id="publishMap">Joriy fermani nashr qilish</button><p>Yangi fermalar nashr qilingan binolar bilan boshlanadi. Avvalgi fermalarda band kataklar himoyalanadi.</p><button id="visitors">Oxirgi 100 o‘yinchi</button><pre></pre><form method="POST" action="/api/admin?action=logout"><button>Hisobdan chiqish</button></form>';
+  document.body.append(form);form.showModal();form.onclose=()=>form.remove();
+  const find=s=>form.querySelector(s), message=t=>find('pre').textContent=t;
+  find('#service').checked=!!config.maintenance;
+  function fields(host,entries,values,base){
+    const inputs={};
+    for(const key of Object.keys(entries)){
+      const label=document.createElement('label'), input=document.createElement('input');
+      input.type='number';input.min=1;input.max=10000;input.value=values[key]||base(key);
+      label.textContent=FarmWorld.kinds[key]||FarmData.items[key]?.name||key;
+      label.append(input);find(host).append(label);inputs[key]=input;
+    }
+    return ()=>Object.fromEntries(Object.entries(inputs).map(([k,v])=>[k,Number(v.value)]));
+  }
+  const costs=fields('#rates',FarmData.caps,config.upgradePrices||{},k=>k==='house'?45:24);
+  const sales=fields('#productRates',FarmData.items,config.products||{},k=>FarmData.items[k].sale);
+  const workshops=Object.fromEntries(Object.entries(FarmData.buildings).filter(([,v])=>v.output));
+  const durations=fields('#durations',workshops,config.durations||{},k=>workshops[k].duration);
+  const yields=fields('#yields',workshops,config.yields||{},k=>workshops[k].count);
+  async function send(publish){
+    if(publish&&!confirm('Joriy ferma xaritasi barcha o‘yinchilar uchun nashr etilsinmi?'))return;
+    const body={version:config.version,maintenance:find('#service').checked,upgradePrices:costs(),products:sales(),durations:durations(),yields:yields()};
+    if(publish)body.map={landscape:state.landscape,objects:FarmWorld.draft(state).objects,zones:state.zones};
+    try{
+      const r=await fetch('/api/admin?action=settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+      const v=await r.json();if(!r.ok)throw Error(v.error||'Saqlanmadi.');
+      Object.assign(config,v);FarmData.upgradePrices=v.upgradePrices;
+      for(const [k,n] of Object.entries(v.products))FarmData.items[k].sale=n;
+      for(const k of Object.keys(workshops)){workshops[k].duration=v.durations[k];workshops[k].count=v.yields[k];}
+      message('Saqlandi · v'+v.version);
+    }catch(e){message(e.message);}
+  }
+  find('#saveRates').onclick=()=>send(false);find('#publishMap').onclick=()=>send(true);
+  if(!config.shared){
+    for(const id of ['#saveRates','#publishMap','#visitors'])find(id).disabled=true;
+    message('Umumiy nashr va o‘yinchilar ro‘yxati uchun Vercel’da Redis bazasini ulang.');
+  }
+  find('#visitors').onclick=async()=>{
+    try{const r=await fetch('/api/admin?action=players');const a=await r.json();if(!r.ok)throw Error(a.error);
+      message(a.filter((_,i)=>i%2===0).map((id,i)=>id+' · '+new Date(Number(a[i*2+1])).toLocaleString()).join('\n')||'Ro‘yxat bo‘sh.');}
+    catch(e){message(e.message);}
+  };
+}
+
+'use strict';
+
+const FarmArt = (() => {
+  const TX = 45;
+  const TY = 24;
+  const project = (x, y) => ({ x: (x - y) * TX, y: (x + y) * TY });
+  const inverse = (x, y) => ({
+    x: Math.round((x / TX + y / TY) / 2),
+    y: Math.round((y / TY - x / TX) / 2)
+  });
+  const palettes = {
+    wheat: ['#e3a436', '#f7ca5d'], corn: ['#508638', '#f0bc47'], carrot: ['#548936', '#ee8646'],
+    pumpkin: ['#507c38', '#de873c']
+  };
+  function random(seed) {
+    let n = seed;
+    return () => {
+      n = (Math.imul(n, 1664525) + 1013904223) >>> 0;
+      return n / 4294967296;
+    };
+  }
+  function polygon(c, points, fill, stroke) {
+    c.beginPath();
+    c.moveTo(...points[0]);
+    for (const p of points.slice(1)) c.lineTo(...p);
+    c.closePath();
+    c.fillStyle = fill;
+    c.fill();
+    if (stroke) {
+      c.strokeStyle = stroke;
+      c.lineWidth = 1;
+      c.stroke();
+    }
+  }
+  function line(c, points, color, width = 1) {
+    c.beginPath();
+    c.moveTo(...points[0]);
+    for (const p of points.slice(1)) c.lineTo(...p);
+    c.strokeStyle = color;
+    c.lineWidth = width;
+    c.lineCap = 'round';
+    c.lineJoin = 'round';
+    c.stroke();
+  }
+  function oval(c, x, y, rx, ry, color, rotation = 0) {
+    c.beginPath();
+    c.ellipse(x, y, rx, ry, rotation, 0, Math.PI * 2);
+    c.fillStyle = color;
+    c.fill();
+  }
+  function gradient(c, y, height, a, b) {
+    const g = c.createLinearGradient(0, y, 0, y + height);
+    g.addColorStop(0, a);
+    g.addColorStop(1, b);
+    return g;
+  }
+  function tile(c, fill, size = 1, outline) {
+    polygon(c, [[0, -TY * size], [TX * size, 0], [0, TY * size], [-TX * size, 0]], fill, outline);
+  }
+  function grass(c, x, y, h, color) {
+    line(c, [[x - 3, y - h + 2], [x, y], [x + 3, y - h]], color, 1.2);
+  }
+  function flower(c, x, y, color, size = 1) {
+    line(c, [[x, y + 4 * size], [x + size, y - 3 * size]], '#52814e', size);
+    for (let i = 0; i < 5; i++) {
+      const a = i * Math.PI * 2 / 5;
+      oval(c, x + Math.cos(a) * 2 * size, y - 3 * size + Math.sin(a) * 2 * size,
+        1.65 * size, 1.55 * size, color);
+    }
+    oval(c, x, y - 3 * size, size, size, '#f8d76e');
+  }
+  function tree(c, size = 1, variant = 0, fruit = false) {
+    c.save();
+    c.scale(size, size);
+    oval(c, 5, 1, 26, 10, '#36543842', -.12);
+    line(c, [[0, 1], [1, -27], [-5, -39]], '#704e34', 8);
+    line(c, [[-2, -2], [0, -30]], '#a97949', 2);
+    line(c, [[1, -16], [12, -30]], '#805336', 4);
+    const colors = [['#345f3e','#558e48','#7da851'], ['#346859','#488c6e','#72a984'], ['#5c7439','#8c9c45','#adb856']][variant];
+    if(variant===1 && !fruit){
+      for(let i=0;i<4;i++){
+        const radius=26-i*5,base=-18-i*14;
+        const points=[[0,base-32],[radius*.45,base-17],[radius*.37,base-18],[radius*.76,base-10],[radius*.64,base-11],[radius,base],[radius*.4,base-3],[0,base+2],[-radius*.35,base-3],[-radius,base-1],[-radius*.68,base-11],[-radius*.83,base-10]];
+        polygon(c,points,gradient(c,base-28,31,'#75a27c','#365f51'));
+        line(c,[[-radius*.52,base-8],[-radius*.24,base-13],[0,base-21]],'#a0b786',1.2);
+      }
+      c.restore();return;
+    }
+    const boughs = [[0,-36,23,17],[-18,-41,17,14],[15,-48,19,16],[-8,-57,20,19],[2,-66,14,13],[-19,-53,13,12]];
+    for (const [x,y,w,h] of boughs) {
+      oval(c,x,y,w,h,gradient(c,y-h,h*2,colors[2],colors[0]));
+      oval(c,x-3,y-4,w*.73,h*.55,colors[1],-.25);
+      line(c, [[x-w*.55,y-6],[x-w*.22,y-10],[x,y-11]], '#e1e9a43c', 2);
+    }
+    if(variant===2 && !fruit){
+      for(let i=0;i<15;i++){
+        const x=(i-7)*3.4,y=-57+Math.abs(i-7)*1.6;
+        const len=24+Math.sin(i*3)*7;
+        oval(c,x,y+len*.34,5,len*.65,i%2?'#90a94e':'#849f48',-.09);
+        line(c,[[x-1,y],[x+1,y+len*.5],[x,y+len]],'#a5b957',1);
+      }
+    }
+    if (fruit) {
+      for (const [x,y] of [[-12,-43],[11,-55],[20,-44],[-18,-56],[2,-63]]) {
+        oval(c,x,y,3.7,3.5,'#d86a4f');
+        oval(c,x-1,y-1,1.2,1.2,'#ffb77a');
+      }
+    }
+    c.restore();
+  }
+  function rock(c, size = 1) {
+    c.save();
+    c.scale(size,size);
+    oval(c,3,2,17,6,'#34504435');
+    polygon(c,[[-15,1],[-12,-8],[-4,-15],[8,-13],[16,-6],[13,1],[0,5]],'#81968a');
+    polygon(c,[[-12,-8],[-4,-15],[8,-13],[5,-7],[-6,-4]],'#bac4a9');
+    polygon(c,[[5,-7],[8,-13],[16,-6],[13,1],[0,5]],'#647d73');
+    c.restore();
+  }
+  function fence(c) {
+    oval(c,0,2,30,7,'#42553835',.4);
+    for (const h of [-15,-7]) {
+      line(c,[[-26,h-7],[24,h+10]],'#88593b',5);
+      line(c,[[-26,h-8],[24,h+9]],'#d8a371',2);
+    }
+    for (const x of [-25,0,24]) {
+      line(c,[[x,x*.32-22],[x,x*.32+2]],'#8d5c3d',6);
+      line(c,[[x-1,x*.32-21],[x-1,x*.32]],'#e2b781',2);
+    }
+  }
+  function terrain(c) {
+    const r = random(125);
+    const grassColors = ['#88a852','#91ad58','#8baa56','#8eab54','#8cab55','#95ae5a'];
+    const road = ['#d7b882','#d9bf8b','#ceb07b'];
+    for (let sum = -14; sum <= 45; sum++) {
+      for (let x = -7; x <= 23; x++) {
+        const y = sum - x;
+        if (y < -7 || y > 23) continue;
+        const p = project(x,y);
+        const isRoad = FarmData.path(x,y);
+        c.save();
+        c.translate(p.x,p.y);
+        const palette = isRoad ? road : grassColors;
+        tile(c, palette[Math.floor(r()*palette.length)], 1.015);
+        for (let i=0; i<(isRoad?5:7); i++) {
+          const a = r()*60-30;
+          const b = (r()*2-1)*(17-Math.abs(a)*.32);
+          oval(c,a,b,r()*2+1,.55,isRoad?'#a77d4c42':'#55774339',.36);
+          if (!isRoad && r()>.69) grass(c,a,b-2,4,'#5c824873');
+        }
+        c.restore();
+      }
+    }
+    // A winding mountain stream with sandbanks and broken surface highlights.
+    const curve = [[-930,210],[-745,214],[-579,167],[-471,108],[-337,102],[-190,101],
+      [-115,63],[-5,38],[95,17],[147,38],[263,73],[376,87],[458,56],[578,21],[710,26],[920,67],[1160,12]];
+    const stream = (w,color,offset=0) => {
+      c.beginPath();
+      c.moveTo(curve[0][0],curve[0][1]+offset);
+      for (let i=1;i<curve.length-1;i++) {
+        const [x,y] = curve[i], [nx,ny] = curve[i+1];
+        c.quadraticCurveTo(x,y+offset,(x+nx)/2,(y+ny)/2+offset);
+      }
+      c.strokeStyle=color;
+      c.lineWidth=w;
+      c.stroke();
+    };
+    stream(110,'#71914d',7);
+    stream(96,'#d9c188',4);
+    stream(83,'#468e89',2);
+    stream(77,'#67b5af');
+    stream(59,'#72c3ba',-4);
+    stream(44,'#76c7bf',-9);
+    stream(2,'#c9ebcc9e',-32);
+    stream(2,'#b4e9d4b0',32);
+    for (let i=0;i<132;i++) {
+      const x = r()*1650-770;
+      const idx = curve.findIndex(p=>p[0]>x);
+      if (idx<1) continue;
+      const [ax,ay]=curve[idx-1], [bx,by]=curve[idx];
+      const y=ay+(by-ay)*(x-ax)/(bx-ax)+(r()-.5)*48;
+      const len=r()*27+4;
+      line(c,[[x,y],[x+len*.43,y-.8],[x+len,y]],r()>.58?'#d2f1d49c':'#4b979527',r()*.8+.55);
+    }
+
+    // Wooden river crossing and moored skiff.
+    for(let i=0;i<18;i++) {
+      const x=78+i*.7,y=-41+i*5;
+      line(c,[[x-16,y],[x+16,y+4]],i%2?'#a67649':'#bc905a',5);
+    }
+    for(const side of [-16,16]) line(c,[[78+side,-44],[90+side,42]],'#745237',2);
+    oval(c,170,36,21,7,'#486f61',-.25);
+    polygon(c,[[148,38],[159,29],[191,28],[179,39],[156,42]],'#a47749','#795336');
+    line(c,[[161,32],[177,36]],'#e6c38d',3);
+    for(let i=0;i<12;i++){
+      const x=-950+i*170, h=32+(i*37)%65;
+      polygon(c,[[x,-82],[x+88,-82-h],[x+197,-82]],'#879b93');
+      polygon(c,[[x+62,-82-h*.7],[x+88,-82-h],[x+115,-82-h*.74],[x+94,-82-h*.8],[x+84,-82-h*.73]],'#dce5d5');
+    }
+    const scenery = [];
+    for (let y=-4;y<20;y++) {
+      for (let x=-4;x<20;x++) {
+        const r1=r();
+        if (FarmData.zone(x,y)!==-1 || x+y<5 || r1<.55) continue;
+        const p=project(x,y);
+        const idx=curve.findIndex(t=>t[0]>p.x);
+        if (idx>0) {
+          const [a,b]=curve[idx-1], [d,e]=curve[idx];
+          if (Math.abs(p.y-(b+(e-b)*(p.x-a)/(d-a)))<54) continue;
+        }
+        scenery.push({ x:p.x+(r()-.5)*51,y:p.y+(r()-.5)*24,kind:r1>.74?'tree':r1>.65?'rock':'flowers',
+          size:.54+r()*.67,variant:Math.floor(r()*3) });
+      }
+    }
+    scenery.push({x:-319,y:179,kind:'tree',size:1.24,variant:2},{x:360,y:170,kind:'tree',size:1.15,variant:1});
+    scenery.sort((a,b)=>a.y-b.y);
+    return scenery;
+  }
+  function sceneryArt(c, s) {
+    if (s.kind === 'tree') tree(c, s.size, s.variant);
+    else if (s.kind === 'rock') rock(c, s.size);
+    else {
+      const rng = random((s.x * 100) | 0);
+      for (let i = 0; i < 7; i++) flower(c, (rng() - .5) * 36, (rng() - .5) * 17,
+        ['#f8df8d', '#f1b3a8', '#fff3cf'][i % 3], .78);
+    }
+  }
+  function drawScenery(c, scenery, land, occupied, v, w) {
+    for (const s of scenery) {
+      if (s.x < v.x - 45 || s.x > w.x + 45 || s.y < v.y - 20 || s.y > w.y + 90 ||
+          occupied.has(s.cell) || land.tiles[s.cell]) continue;
+      c.drawImage(s.sprite, s.x - s.originX, s.y - s.originY);
+    }
+  }
+  const landSprites = new Map();
+  const directions = [[-1, 0], [0, -1], [1, 0], [0, 1]];
+  function shape(c, edges, margin, radius) {
+    const [left, top, right, bottom] = edges.map(join => join ? .506 : .5 - margin);
+    const vertices = [[-left, -top], [right, -top], [right, bottom], [-left, bottom]];
+    const joins = [[edges[0], edges[1]], [edges[1], edges[2]], [edges[2], edges[3]], [edges[3], edges[0]]];
+    const towards = (from, to, distance) => {
+      const gap = Math.hypot(to[0] - from[0], to[1] - from[1]);
+      return project(from[0] + (to[0] - from[0]) * distance / gap,
+        from[1] + (to[1] - from[1]) * distance / gap);
+    };
+    c.beginPath();
+    vertices.forEach((corner, i) => {
+      const bend = joins[i].some(Boolean) ? 0 : radius;
+      const before = towards(corner, vertices[(i + 3) % 4], bend);
+      const after = towards(corner, vertices[(i + 1) % 4], bend);
+      const p = project(...corner);
+      if (i === 0) c.moveTo(before.x, before.y);
+      else c.lineTo(before.x, before.y);
+      c.quadraticCurveTo(p.x, p.y, after.x, after.y);
+    });
+    c.closePath();
+  }
+  function landSprite(type, edges, variant) {
+    const id = type + edges.map(Number).join('') + variant;
+    if (landSprites.has(id)) return landSprites.get(id);
+    const sprite = document.createElement('canvas');
+    sprite.width = 96;
+    sprite.height = 54;
+    const c = sprite.getContext('2d');
+    c.translate(48, 27);
+    const rng = random(17 + variant * 23);
+    if (type === 'grass') {
+      tile(c, ['#8dab55', '#91ad58', '#88a752'][variant], 1.015);
+      for (let n = 0; n < 7; n++) {
+        const p = project((rng() - .5) * .85, (rng() - .5) * .85);
+        grass(c, p.x, p.y, 3 + rng() * 2, '#62864787');
+      }
+    } else {
+      const pond = type === 'water';
+      const colors = pond ? ['#d7c28a', '#518e87', '#72bbb4'] : ['#ab985d', '#c0a574', '#d6b781'];
+      const margins = pond ? [.015, .045, .078] : [.14, .17, .20];
+      for (const [i, color] of colors.entries()) {
+        shape(c, edges, margins[i], .12);
+        c.fillStyle = color;
+        c.fill();
+      }
+      c.save();
+      c.clip();
+      for (let n = 0; n < 5; n++) {
+        const p = project((rng() - .5) * .65, (rng() - .5) * .65);
+        if (pond) line(c, [[p.x - 5, p.y], [p.x + 2, p.y - 1], [p.x + 8, p.y - .2]], '#d0eee38e', .9);
+        else oval(c, p.x, p.y, 1.8, .75, '#a9885a76');
+      }
+      c.restore();
+    }
+    landSprites.set(id, sprite);
+    return sprite;
+  }
+  function drawLand(c, land, v, w) {
+    const cells = [];
+    const edited = new Set(Object.keys(land.tiles));
+    for (const cell of edited) {
+      const [x, y] = cell.split(',').map(Number);
+      const type = FarmWorld.ground(land, x, y);
+      if (!land.tiles[cell] && type === 'road') continue;
+      const p = project(x, y);
+      if (p.x < v.x - TX || p.x > w.x + TX || p.y < v.y - TY || p.y > w.y + TY) continue;
+      const variant = (x * 11 + y * 7) % 3;
+      c.drawImage(landSprite('grass', [], variant), p.x - 48, p.y - 27);
+      if (type !== 'grass') cells.push({ x, y, p, type, variant });
+    }
+    for (const { x, y, p, type, variant } of cells) {
+      const edges = directions.map(([dx, dy]) => FarmWorld.ground(land, x + dx, y + dy) === type);
+      c.drawImage(landSprite(type, edges, variant), p.x - 48, p.y - 27);
+    }
+  }
+  function plot(c, object, now, motion) {
+    tile(c,'#63884186',.94);
+    c.translate(0,1);
+    tile(c,'#78513c',.88,'#76513b');
+    c.translate(0,-3);
+    tile(c,gradient(c,-20,40,'#b87f51','#a06a45'),.87,'#c49460');
+    const rng=random(object.id*109);
+    for(let i=0;i<4;i++){
+      const base=project((i-1.5)*.2,0);
+      line(c,[[base.x+16,base.y-8.7],[base.x-17,base.y+8.9]],'#87573e',3);
+      line(c,[[base.x+16,base.y-7],[base.x-17,base.y+10.5]],'#d29a64',1.35);
+    }
+    for (let i=0;i<14;i++) oval(c,(rng()-.5)*36,(rng()-.5)*14,1,.65,'#e6b58091');
+    if(!object.crop) return;
+    const fraction=Math.max(0,Math.min(1,(now-object.started)/(object.ready-object.started)));
+    for(let row=0;row<4;row++) for(let i=0;i<4;i++){
+      const p=project((i-1.5)*.196,(row-1.5)*.196);
+      c.save();
+      c.translate(p.x,p.y);
+      const size=.33+.67*fraction;
+      c.scale(size,size);
+      const sway=motion?Math.sin(now/710+i+row)*1.8:0;
+      const [green,fruit]=palettes[object.crop];
+      line(c,[[0,2],[-.8,-5],[sway,-17]],fraction>.63?green:'#598349',1.7);
+      for (let leaf=0;leaf<3;leaf++) {
+        const side=leaf%2?1:-1;
+        oval(c,side*2+sway*.4,-4.7-leaf*3,3.6,1.35,leaf===1?'#91a64b':'#6b9544',side*.5);
+      }
+      if (fraction>.42) {
+        if(object.crop==='wheat'){
+          for(let grain=0;grain<5;grain++) oval(c,sway+(grain%2?1.8:-1.3),-11-grain*1.65,1.9,3,fruit,grain%2?.55:-.6);
+        } else if(object.crop==='corn'){
+          oval(c,sway+3,-11,2.9,5.3,fruit,.36);
+          line(c,[[sway+1,-7],[sway+5,-15]],'#ffe49d',.85);
+        } else if (object.crop==='pumpkin') {
+          oval(c,-2,0,3,3.8,'#b6643c');
+          oval(c,2,0,3,3.8,'#b6643c');
+          oval(c,0,-.8,3.5,4.2,fruit);
+          line(c,[[0,-5],[1,-8]],'#567743',1.2);
+        } else {
+          oval(c,0,0,3.7,2.8,fruit);
+          line(c,[[-1,-4],[1,-12],[5,-13]],'#87a947',1.4);
+        }
+      }
+      c.restore();
+    }
+  }
+
+  function windowAt(c,x,y,w,h,direction) {
+    const shift = direction*w*.52;
+    const pts = [[x,y],[x+w,y+shift],[x+w,y+h+shift],[x,y+h]];
+    polygon(c,pts,'#477a83','#76583e');
+    line(c,[[x+w*.52,y+shift*.52],[x+w*.52,y+h+shift*.52]],'#eed9a4',1.35);
+    line(c,[[x,y+h*.53],[x+w,y+h*.53+shift]],'#eed9a4',1.1);
+    line(c,[[x-1,y+h],[x+w+1,y+h+shift]],'#ffdb9d',2);
+  }
+  function house(c, config) {
+    const {wall,shade,roof,roofLight,roofShade, type} = config;
+    oval(c,7,8,47,17,'#3a503b58',-.15);
+    tile(c,'#c4a472',1.024);
+    const back = [0,-22], left = [-39,-1], front = [0,20], right = [39,-1];
+    const h=34;
+    polygon(c,[left,front,[0,20-h],[-39,-1-h]],wall,'#805a424a');
+    polygon(c,[front,right,[39,-1-h],[0,20-h]],shade,'#805a424a');
+    for(let i=0;i<6;i++){
+      const y=-4-i*5;
+      line(c,[[-38,y],[0,y+21],[38,y]],'#553f362b');
+      line(c,[[-37,y-1],[0,y+20]],'#fff0ba55');
+    }
+    polygon(c,[[8,15],[20,8.5],[20,-12],[8,-5]],'#6b4a36','#ad7c55');
+    line(c,[[11,11],[11,-4]],'#b68654',1);
+    oval(c,17,-1,1.7,1.45,'#f6cf70');
+    windowAt(c,-29,-22,14,12,1);
+    windowAt(c,26,-24,9,12,-1);
+    const ridgeBack=[-19,-66], ridgeFront=[20,-45];
+    polygon(c,[[-44,-34],[-1,-11],ridgeFront,ridgeBack],roofLight,'#603e3b');
+    polygon(c,[ridgeBack,ridgeFront,[45,-34],[1,-57]],roof,'#603e3b');
+    polygon(c,[[-1,-11],ridgeFront,[45,-34],[39,-35],[0,-15]],roofShade,'#603e3b');
+    for(let i=1;i<7;i++){
+      const t=i/7;
+      line(c,[[-44+25*t,-34-32*t],[-1+21*t,-11-34*t]],'#4c332f37',1.25);
+      line(c,[[-19+20*t,-66+9*t],[20+25*t,-45+11*t]],'#efbf9a44',1.1);
+      const shift=i%2?5:2;
+      for(let j=0;j<6;j++) {
+        const u=(j*7+shift)/43;
+        line(c,[[-44+25*t+43*u,-34-32*t+23*u],[-44+25*(t-.10)+43*u,-34-32*(t-.10)+23*u]],'#4c332f42',.7);
+      }
+    }
+    line(c,[ridgeBack,ridgeFront],roofShade,4);
+    line(c,[[-20,-66],[20,-45]],roofLight,1.4);
+    if(type === 'bakery' || type === 'house'){
+      polygon(c,[[16,-47],[23,-43],[23,-65],[16,-69]],'#a95f4a','#764c3f');
+      polygon(c,[[23,-43],[30,-47],[30,-69],[23,-65]],'#804e46');
+      polygon(c,[[14,-69],[23,-64],[32,-69],[23,-74]],'#d79a78','#764c3f');
+      polygon(c,[[18,-69],[23,-66],[28,-69],[23,-71]],'#613d35');
+    }
+    if(type==='barn'){
+      polygon(c,[[-26,-7],[-9,3],[-9,-17],[-26,-26]],'#623e33','#e2ad76');
+      line(c,[[-25,-24],[-10,1]],'#c79363',1.7);
+      line(c,[[-25,-7],[-10,-16]],'#c79363',1.7);
+    }
+  }
+  function animal(c, type, x, y, now, motion, seed,rank) {
+    const cycle=now/1000+seed*1.9;
+    const grazing=Math.floor(cycle/3)%4;
+    const pace=Math.floor(cycle/12)*6+Math.min(6,cycle%12);
+    const dx=motion?Math.sin(pace)*3:0;
+    const dy=motion?Math.cos(now/1950+seed)*1.4:0;
+    c.save();
+    c.translate(x+dx,y+dy);
+    oval(c,0,2,type==='chicken'?8:12,4,'#4a58394d');
+    const stride=motion && grazing<2?Math.sin(now/150+seed)*1.6:0;
+    if(type==='chicken'){
+      line(c,[[-3,-3],[-3+stride,1],[-5+stride,1]],'#ad7440',1.1);
+      line(c,[[2,-3],[2-stride,1],[4-stride,1]],'#ad7440',1.1);
+      polygon(c,[[-5,-9],[-10,-12],[-8,-6],[-3,-4]],'#d9cfad');
+      oval(c,-1,-7,7,5,['','#f6e8c1','#caab7f','#bd7958','#e1cfab','#e6bf61'][rank],.16);
+      oval(c,-2,-7,4.4,2.9,'#e6d5ac',-.22);
+      if(motion && grazing===1) c.rotate(.21);
+      oval(c,4,-11,4,4.4,'#fff0cb');
+      oval(c,3,-15,2,2,'#c65a44');
+      oval(c,6,-12,1,1,'#363731');
+      polygon(c,[[7,-11],[11,-10],[7,-8]],'#e2a84a');
+    } else {
+      const isCow=type==='cow';
+      for(let i=0;i<4;i++){
+        const leg=i*4-7;
+        line(c,[[leg,-6],[leg+(i%2?stride:-stride),-1]],isCow?'#655248':'#68554b',2);
+      }
+      oval(c,-2,-8,isCow?11:9,7,isCow?'#eae1c8':'#dcd2b7');
+      if(isCow){
+        oval(c,-5,-9,4,5,'#674c3d',.35);
+        oval(c,1,-11,3,3,'#674c3d');
+        line(c,[[-12,-9],[-15,-5],[-14+(motion?Math.sin(now/250)*2:0),-3]],'#6b4b39',1.2);
+        c.translate(0,motion&&grazing===2?2.1:0);
+        oval(c,8,-9,5,5,'#f1dbbd');
+        oval(c,10,-6,4,2.5,'#d5a791');
+        line(c,[[6,-13],[4,-15]],'#ac8d6d',1.6);
+      } else {
+        for(const [bx,by] of [[-7,-8],[-8,-12],[-3,-13],[3,-12],[3,-7],[-3,-7]]) oval(c,bx,by,4.5,4,'#f1e8cf');
+        c.translate(0,motion&&grazing===2?2.1:0);
+        oval(c,7,-8,4.6,4.8,'#766353');
+        oval(c,6,-11,3,1.7,'#8b7561',.5);
+      }
+      oval(c,9,-9,1,1,'#2f2c28');
+    }
+    c.restore();
+  }
+  function pen(c, kind, now, motion, seed,rank) {
+    oval(c,0,5,45,17,'#53673f40');
+    tile(c,'#bdba71',.95,'#aeaa64');
+    const cfg=kind==='chicken'? buildings.chicken : kind==='cow'?buildings.cow:buildings.sheep;
+    c.save();
+    c.translate(-10,-7);
+    c.scale(.54,.54);
+    house(c,{...cfg,roof:['',cfg.roof,'#9b5841','#826353','#916746','#b99a49'][rank]});
+    c.restore();
+    c.save();
+    c.translate(19,-5);
+    c.scale(.58,.58);
+    fence(c);
+    c.restore();
+    if(rank>=2) {
+      oval(c,22,2,6,2.7,'#8d754b');
+      oval(c,22,1.3,5,1.6,'#85bdba');
+    }
+    if(rank>=3){
+      line(c,[[-23,7],[-23,-10]],'#665547',2);
+      oval(c,-23,-12,2.2,3.5,rank===5?'#f4cf69':'#e6b878');
+    }
+    if(rank>=4) { c.save();c.translate(-21,-6);c.scale(.28,.34);house(c,cfg);c.restore(); }
+    animal(c,kind,8,1,now,motion,seed,rank);
+    animal(c,kind,-12,12,now,motion,seed+2,rank);
+    c.save();
+    c.translate(4,15);
+    c.scale(-.62,.58);
+    fence(c);
+    c.restore();
+  }
+  const buildings = {
+    house: {wall:'#f1d4a0',shade:'#c5a377',roof:'#b85f48',roofLight:'#cf7958',roofShade:'#8a493e',type:'house'},
+    barn: {wall:'#c36b52',shade:'#a55843',roof:'#4d6466',roofLight:'#718582',roofShade:'#3f5156',type:'barn'},
+    bakery: {wall:'#f2cf91',shade:'#cda875',roof:'#536e79',roofLight:'#6a8990',roofShade:'#3f5d69',type:'bakery'},
+    mill: {wall:'#e1bd85',shade:'#bc976e',roof:'#af6f49',roofLight:'#cf8e53',roofShade:'#87593e',type:'mill'},
+    chicken: {wall:'#f4d7a4',shade:'#cba374',roof:'#b46c46',roofLight:'#cf8b5c',roofShade:'#8d5a42'},
+    cow: {wall:'#ddb894',shade:'#bb9173',roof:'#577d77',roofLight:'#7f9d88',roofShade:'#486459'},
+    sheep: {wall:'#e4c6a7',shade:'#ac927a',roof:'#8a6f8c',roofLight:'#a586a1',roofShade:'#624f72'}
+  };
+  function mill(c, now, motion,rank=1) {
+    const roof=['','#93663e','#a55d42','#926844','#8e724e','#5a8c76','#588477','#658679','#b8b9ac','#cfbe81','#dab14e'][rank];
+    house(c,{...buildings.mill,roof,wall:rank>6?'#c4bc9f':buildings.mill.wall});
+    if(rank>=4){
+      c.save();c.translate(22,-3);c.scale(.25+rank*.015,.4+rank*.018);
+      house(c,{...buildings.barn,roof});c.restore();
+    }
+    c.save();
+    if(rank>=7){
+      line(c,[[5,-9],[17,-5],[30,-11]],rank>=8?'#d7b35b':'#ac8f6a',2.2);
+      for(const x of [7,12,18,24,29])line(c,[[x,-12],[x,-7]],'#a18c70',1);
+    }
+    c.translate(-18,-44);
+    c.rotate(motion ? now/2700%6.283 : .58);
+    for(let i=0;i<4;i++){
+      c.rotate(Math.PI/2);
+      polygon(c,[[0,1],[1,-29],[9,-30],[12,-9],[4,-9]],'#f1ddb0','#8b694a');
+      for(let j=0;j<4;j++) line(c,[[2,-10-j*5],[10-j*.5,-10-j*5]],'#ac875f',.8);
+    }
+    oval(c,0,0,4,4,'#704e39');
+    oval(c,-1,-1,1.3,1.3,'#e0aa61');
+    c.restore();
+  }
+  function orderBoard(c) {
+    oval(c,2,4,28,9,'#455b3f4c');
+    for(const x of [-16,18]){
+      line(c,[[x,4],[x,-28]],'#79533b',6);
+      line(c,[[x-1,4],[x-1,-25]],'#c88f59',2);
+    }
+    polygon(c,[[-25,-31],[24,-26],[24,-2],[-25,-7]],'#a5754c','#765139');
+    polygon(c,[[-21,-28],[20,-24],[20,-6],[-21,-10]],'#f2ddaa','#cc9d68');
+    for(const x of [-13,0,12]){
+      polygon(c,[[x-4,-24],[x+5,-23],[x+5,-13],[x-4,-14]],'#fff3d4');
+      line(c,[[x-2,-20],[x+3,-20]],'#a17d58',.8);
+      line(c,[[x-2,-17],[x+2,-17]],'#a17d58',.8);
+    }
+    polygon(c,[[-29,-31],[-16,-42],[22,-37],[29,-26]],'#be754c','#85523f');
+    line(c,[[-29,-31],[29,-26]],'#e8a171',2);
+  }
+  function drawObject(c, o, now, motion) {
+    const { x,y }=project(o.x,o.y);
+    c.save();
+    c.translate(x,y);
+    if(Village.building(c,o)){
+      if(o.kind==='bakery' && o.ready>now && motion){
+        for(let i=0;i<3;i++){
+          const phase=((now+i*580)%1740)/1740;
+          c.globalAlpha=(1-phase)*.5;
+          oval(c,4+phase*9,-59-phase*23,2+phase*4,2+phase*3,'#e8e7d8');
+        }
+      }
+      c.restore();return;
+    }
+    const rank=o.rank||1;
+    if(rank>1 && buildings[o.kind] || o.kind==='windmill') {
+      c.scale(1+(rank-1)*.012,1+(rank-1)*.028);
+    }
+    switch(o.kind){
+      case 'field': plot(c,o,now,motion); break;
+      case 'chicken': case 'cow': case 'sheep': pen(c,o.kind,now,motion,o.id,rank); break;
+      case 'windmill': case 'mill': mill(c,now*(o.ready>now?1.8:1),motion,rank); break;
+      case 'orders': orderBoard(c); break;
+      case 'tree': tree(c,.79,2,true); break;
+      case 'rock': rock(c, .95); break;
+      case 'fence': fence(c); break;
+      case 'flowers': {
+        const r=random(o.id*19);
+        oval(c,0,1,26,10,'#71964d');
+        for(let i=0;i<15;i++) flower(c,(r()-.5)*40,(r()-.5)*15,['#efab9c','#f8e7aa','#f1d17e'][i%3],.8+r()*.36);
+        break;
+      }
+      default:
+        if (buildings[o.kind]) house(c, buildings[o.kind]);
+        if (o.kind === 'bakery' && o.ready > now && motion) {
+          for (let i = 0; i < 3; i++) {
+            const phase = ((now + i * 650) % 1950) / 1950;
+            c.globalAlpha = (1 - phase) * .46;
+            oval(c, 23 + phase * 15, -73 - phase * 25, 2.5 + phase * 6, 2 + phase * 4, '#f1e9d1');
+          }
+          c.globalAlpha = 1;
+        }
+    }
+    c.restore();
+  }
+  function marker(c, x, y, text, direction = false) {
+    c.font='bold 11px system-ui,sans-serif';
+    const halfWidth = Math.max(12,c.measureText(text).width/2+6);
+    c.save();
+    c.translate(x,y);
+    c.fillStyle=direction?'#37684d':'#fff4d8';
+    c.strokeStyle=direction?'#f4de9e':'#ad8754';
+    c.lineWidth=1;
+    c.beginPath();
+    if (c.roundRect) c.roundRect(-halfWidth,-9,halfWidth*2,18,5);
+    else c.rect(-halfWidth,-9,halfWidth*2,18);
+    c.fill();
+    c.stroke();
+    polygon(c,[[-4,8],[4,8],[0,13]],direction?'#37684d':'#fff4d8');
+    c.fillStyle=direction?'#fff4d8':'#38563b';
+    c.textAlign='center';
+    c.textBaseline='middle';
+    c.fillText(text,0,0);
+    c.restore();
+  }
+  function badgeHeight(kind) {
+    if (kind==='field') return 26;
+    if (['chicken','cow','sheep'].includes(kind)) return 44;
+    return 78;
+  }
+  function grassTexture() {
+    const texture = document.createElement('canvas');
+    texture.width = 180;
+    texture.height = 96;
+    const painter = texture.getContext('2d', { alpha: false });
+    painter.fillStyle = '#8daa55';
+    painter.fillRect(0, 0, texture.width, texture.height);
+    const rng = random(208);
+    for (let i = 0; i < 45; i++) {
+      const x = rng() * texture.width;
+      const y = rng() * texture.height;
+      for (const dx of [-texture.width, 0, texture.width]) {
+        if (x + dx < -8 || x + dx > texture.width + 8) continue;
+        for (const dy of [-texture.height, 0, texture.height]) {
+          if (y + dy < -8 || y + dy > texture.height + 8) continue;
+          grass(painter, x + dx, y + dy, 4, '#68884852');
+          oval(painter, x + dx + 4, y + dy + 2, 2, .65, '#adbb6860');
+        }
+      }
+    }
+    return texture;
+  }
+  function buildTerrain() {
+    const texture = grassTexture();
+    const canvas = document.createElement('canvas');
+    canvas.width = 1980;
+    canvas.height = 1170;
+    const c = canvas.getContext('2d', { alpha: false });
+    c.translate(990, 175);
+    c.fillStyle = c.createPattern(texture, 'repeat') || '#8daa55';
+    c.fillRect(-990, -175, canvas.width, canvas.height);
+    const scenery = terrain(c).map(s => {
+      const sprite = document.createElement('canvas');
+      const originX = s.kind === 'tree' ? 48 : 30;
+      const originY = s.kind === 'tree' ? 106 : 26;
+      sprite.width = originX * 2;
+      sprite.height = originY + 16;
+      const painter = sprite.getContext('2d');
+      painter.translate(originX, originY);
+      sceneryArt(painter, s);
+      const cell = inverse(s.x, s.y);
+      return { x: s.x, y: s.y, sprite, originX, originY, cell: FarmWorld.key(cell.x, cell.y) };
+    });
+    return { canvas, scenery, texture };
+  }
+  return { tree,TX,TY,project,inverse,tile,line,oval,drawObject,marker,badgeHeight,buildTerrain,drawLand,drawScenery };
+})();
+
+'use strict';
+
+(async () => {
+  const $ = selector => document.querySelector(selector);
+  const canvas = $('#map');
+  const surface = $('#game');
+  const ctx = canvas.getContext('2d', { alpha: false });
+  const panel = $('#panel');
+  const panelBody = $('#panelBody');
+  const data = FarmData;
+  const art = FarmArt;
+  let storage;
+  try { storage = FarmProfiles.store(); } catch { /* The farm also runs in memory. */ }
+  let config={version:0,upgradePrices:{},products:{},map:null};
+  try {
+    const r=await fetch('/api/world',{signal:AbortSignal.timeout(3500)});
+    if(r.ok){config=await r.json(); storage?.setItem('fv-world-cache',JSON.stringify(config));}
+    else throw Error();
+  }catch{try{config=JSON.parse(storage?.getItem('fv-world-cache'))||config;config.shared=false;}catch{}}
+  window.farmConfig=config;
+  if(config.maintenance && !ADMIN_VIEW) {
+    surface.innerHTML='<section class="pause"><h1>Texnik xizmat</h1><p>Ferma vaqtincha yopiq. Keyinroq qayta kiring.</p><button onclick="location.reload()">Yangilash</button></section>';return;
+  }
+  FarmData.upgradePrices=config.upgradePrices;
+  for(const [k,n] of Object.entries(config.products||{})) if(data.items[k]) data.items[k].sale=n;
+  for(const [k,n] of Object.entries(config.durations||{})) if(data.buildings[k]) data.buildings[k].duration=n;
+  for(const [k,n] of Object.entries(config.yields||{})) if(data.buildings[k]) data.buildings[k].count=n;
+  const model = FarmModel.create(storage);
+  if(config.map && !model.store.damaged)model.syncWorld(config.map);
+  try{
+    let id=storage?.getItem('fv-visitor');
+    if(!id){id=crypto.randomUUID();storage?.setItem('fv-visitor',id);}
+    fetch('/api/visit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id})}).catch(()=>{});
+  }catch{}
+  const traveler = FarmTraveler.create(model);
+  const terrain = art.buildTerrain();
+  const groundTexture = ctx.createPattern(terrain.texture, 'repeat');
+  const state = model.read();
+/*admin-only*/  const editor = FarmEditor.create(storage, state);
+  const editorBar = $('#editorBar');
+/*end-admin*/  const jsonFile = $('#jsonFile');
+  let editorMode = null;
+  let filePurpose;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const pointers = new Map();
+  let width, height, density, baseZoom;
+  let { x: cameraX, y: cameraY, zoom } = state.camera;
+  let gesture, placement, view, objectId;
+  let noticeTimer, audio, lastFrame = -1000, lastSecond = -1, panelMarkup = '';
+  let invalid = true;
+  let sortedObjects = [];
+  const artwork = {
+    wheat: '<path d="M9 25 18 6" stroke="#8a6236" stroke-width="2"/><path d="M17 14c-5 0-7-2-6-6 4 0 6 2 6 6Zm-3 6c-5 0-7-2-6-6 4 0 6 2 6 6Zm3-5c0-4 3-6 8-6-1 5-4 7-8 6Zm-2 5c1-4 4-5 8-4-2 4-4 5-8 4Zm3-9c-2-4 0-7 4-9 1 4 0 7-4 9Z" fill="#eab346" stroke="#b77b36"/>',
+    corn: '<path d="M8 25C4 16 10 6 17 4c8 0 7 11-2 20Z" fill="#efbd4e" stroke="#b78734"/><path d="M13 10l7 3m-9 1 7 3m-8 1 5 3" stroke="#d39834"/><path d="M8 26C4 21 5 14 8 12c2 5 3 6 3 8 4-1 7-4 10-7-1 7-6 14-13 13Z" fill="#658e4a"/>',
+    carrot: '<path d="M7 26c3-9 6-18 12-16 9 4-2 10-12 16Z" fill="#e68748" stroke="#b8643e"/><path d="m18 11 1-7m1 7 5-7m-4 8 6-2" stroke="#63924d" stroke-width="2.5" stroke-linecap="round"/><path d="m12 18 2 1m0-4 3 1" stroke="#b8643e"/>',
+    pumpkin: '<path d="M15 10c-2-5 2-6 5-6" fill="none" stroke="#5a8048" stroke-width="2"/><ellipse cx="15" cy="17" rx="12" ry="9" fill="#e69a53" stroke="#b77344"/><ellipse cx="15" cy="17" rx="7" ry="9" fill="#ecab59" stroke="#b77344"/>',
+    orders: '<path d="M6 8 24 6v18L6 27Z" fill="#ad7852" stroke="#714b38"/><path d="m9 9 12-1v12l-12 2Z" fill="#fff2cb"/><path d="m11 13 7-1m-7 5 6-1" stroke="#9c7857" stroke-width="1.3"/><path d="m3 9 7-6 15 1 3 4Z" fill="#c77854" stroke="#845740"/>',
+    barn: '<path d="M5 13 15 5l10 8v13H5Z" fill="#bf7353" stroke="#824d43"/><path d="m3 13 4-7 8-4 8 4 4 7-3 2-9-7-9 7Z" fill="#4c686c"/><path d="M11 16h8v10h-8z" fill="#704c3d" stroke="#f0c690"/><path d="m11 17 8 9m0-9-8 9" stroke="#e4ba82"/>',
+    shop: '<path d="M5 11h20v15H5Z" fill="#e5ba80" stroke="#895e44"/><path d="M12 16h6v10h-6Z" fill="#6b6651"/><path d="M4 5h22l2 8H2Z" fill="#ce8057" stroke="#985e45"/><path d="M8 5h4l-1 8H6Zm10 0h4l2 8h-5Z" fill="#fff0bc"/>',
+    egg: '<path d="M15 4c4 0 9 8 9 13a9 9 0 0 1-18 0c0-5 5-13 9-13Z" fill="#efd6a6" stroke="#b68d63"/><path d="M10 17c0-2 1-5 3-7" fill="none" stroke="#fff3d5" stroke-width="2" stroke-linecap="round"/>',
+    milk: '<path d="M11 4h8v5l4 5v12H7V14l4-5Z" fill="#fff3d1" stroke="#879695"/><path d="M7 15h16v7H7Z" fill="#7da6a4"/><path d="M11 4h8v4h-8Z" fill="#658489"/>',
+    wool: '<path d="M7 10c0-4 6-6 9-3 4-3 9 1 8 4 5 2 4 9 1 11-1 4-7 5-10 3-4 3-11 1-11-3-4-3-2-11 3-12Z" fill="#eee1bf" stroke="#9b9177"/><path d="M8 17c2-5 8-2 7 1 0 2-3 3-4 1m7-8c3 1 3 5 1 6" fill="none" stroke="#bfb299"/>',
+    bread: '<path d="M3 22C1 14 14 4 22 5c10 1 6 13 0 17S5 29 3 22Z" fill="#d8954b" stroke="#9d6440"/><path d="m10 15 5 3m0-8 5 4m0-6 5 4" stroke="#f8d694" stroke-width="2" stroke-linecap="round"/>',
+    feed: '<path d="M8 4h14l-2 6c9 9 6 16 2 16H8C2 26 1 19 10 10Z" fill="#c8a879" stroke="#8b6949"/><path d="M9 10h12" stroke="#845c44" stroke-width="2"/><path d="m10 17 2-2m1 6 2-2m2-4 2 2m-1 4 2-1" stroke="#8d8051" stroke-width="1.5"/>',
+    chicken: '<path d="M3 12c3 0 4 3 6 4 2-3 4-5 8-6l7 2c4 7-2 13-10 13S3 20 3 12Z" fill="#f5dfae" stroke="#997b58"/><path d="M17 13c-3-5 0-8 4-8 4 0 6 4 4 8" fill="#fcf1ce" stroke="#b39167"/><path d="m24 10 5 2-5 2" fill="#d99446"/><circle cx="22" cy="9" r="1" fill="#53443c"/><path d="m17 7 1-4 4 2" stroke="#b75f4c" fill="none" stroke-width="2"/>',
+    flowers: '<path d="M15 27v-13m0 9c-6-1-8-3-8-6 6 0 8 3 8 6m0 2c3-5 6-6 9-5-2 5-5 6-9 5" fill="#719b51" stroke="#5e8249" stroke-width="1.4"/><path d="M12 7c0-6 7-6 7 0 6-1 8 5 3 7 1 5-4 8-7 4-3 4-9 1-7-4-6-2-3-8 4-7Z" fill="#df9182"/><circle cx="15" cy="12" r="3" fill="#f7cf74"/>',
+    settings: '<path d="M12 3h6l1 4 4 1 4 5-2 3 1 4-5 4-4-1-3 3-5-2-1-4-4-1-1-6 3-3 1-4 4-1Z" fill="#67846a" stroke="#365743"/><circle cx="15" cy="14" r="4.5" fill="#fff0ce"/>',
+    home: '<path d="M7 6H4v6m19-6h3v6M7 24H4v-6m19 6h3v-6" fill="none" stroke="#486d53" stroke-width="2.4" stroke-linecap="round"/><circle cx="15" cy="15" r="4" fill="#74945b"/>'
+  };
+  const icon = key => '<svg viewBox="0 0 30 30" aria-hidden="true">' + (artwork[key] || artwork.barn) + '</svg>';
+  const buildingIcon = { field: 'wheat', bakery: 'bread', mill: 'feed', cow: 'milk', sheep: 'wool', tree: 'flowers', fence: 'flowers' };
+  const timeString = ms => {
+    const total = Math.max(0, Math.ceil(ms / 1000));
+    return total > 59 ? Math.floor(total / 60) + ':' + String(total % 60).padStart(2, '0') : total + ' s';
+  };
+  const itemList = recipe => Object.entries(recipe).map(([k, n]) => data.items[k].name + ' ×' + n).join(' · ');
+  const price = value => value + ' tanga';
+
+  function beep(style) {
+    if (!state.sound) return;
+    try {
+      if (!audio) audio = new (window.AudioContext || window.webkitAudioContext)();
+      if (audio.state === 'suspended') audio.resume().catch(async () => {});
+      const start = audio.currentTime;
+      const notes = style === 'level' ? [440, 554, 659] : style === 'collect' ? [466, 622] : [392];
+      notes.forEach((frequency, i) => {
+        const note = audio.createOscillator();
+        const gain = audio.createGain();
+        const at = start + i * .067;
+        note.type = 'sine';
+        note.frequency.value = frequency;
+        gain.gain.setValueAtTime(.001, at);
+        gain.gain.exponentialRampToValueAtTime(.065, at + .017);
+        gain.gain.exponentialRampToValueAtTime(.001, at + .15);
+        note.connect(gain).connect(audio.destination);
+        note.start(at);
+        note.stop(at + .16);
+      });
+    } catch { /* Sound is optional on browsers without Web Audio. */ }
+  }
+  function showNotice(message) {
+    clearTimeout(noticeTimer);
+    $('#notice').textContent = message;
+    noticeTimer = setTimeout(async () => { $('#notice').textContent = ''; }, 2600);
+  }
+  function rebuildOrder() {
+    sortedObjects = [...state.objects].sort((a, b) => a.x + a.y - b.x - b.y);
+    invalid = true;
+  }
+  function result(update, sound = 'tap') {
+    if (update.message || update.raised) showNotice(update.message + (update.raised ? '  ·  ' + model.level() + '-daraja ochildi!' : ''));
+    if (update.ok) {
+      beep(update.raised ? 'level' : sound);
+      if (!update.saved) showNotice('Progress saqlanmadi. Agar boshqa oynada o‘yin ochiq bo‘lsa, shu oynani yoping yoki progressni eksport qiling.');
+      rebuildOrder();
+      refreshHUD();
+      redrawPanel();
+    }
+    return update.ok;
+  }
+  function refreshHUD() {
+    const level = model.level();
+    const bottom = model.levels[level - 1];
+    const top = model.levels[level];
+    $('#coins').textContent = state.coins;
+    $('#level').textContent = level;
+    $('#level').setAttribute('aria-label', level + '-daraja');
+    $('#xp').textContent = top ? (state.xp - bottom) + '/' + (top - bottom) + ' XP' : state.xp + ' XP';
+    $('#bar').style.width = (top ? (state.xp - bottom) / (top - bottom) * 100 : 100) + '%';
+    const guide = [
+      ['Birinchi ekin', 'Dalaga bosing va bug‘doy eking.'],
+      ['Hosilni yig‘ing', 'Bug‘doy pishgach, dala ustiga bosing.'],
+      ['Birinchi buyurtma', 'Buyurtmalar menyusidan choyxonaga bug‘doy soting.'],
+      ['Fermani rivojlantiring', 'Do‘kondan yangi bino yoki bezak tanlang.']
+    ];
+    const lesson = $('#lesson');
+    lesson.hidden = state.lesson >= guide.length;
+    if (!lesson.hidden && lesson.dataset.step !== String(state.lesson)) {
+      const [title, copy] = guide[state.lesson];
+      lesson.dataset.step = state.lesson;
+      lesson.innerHTML = '<div><b>' + title + '</b>' + copy + '</div><button aria-label="Yo‘riqnomani yopish">×</button>';
+    }
+  }
+  function action(label, name, value = '', disabled = false, secondary = false) {
+    return '<button class="action' + (secondary ? ' secondary' : '') + '" data-action="' + name +
+      '" data-value="' + value + '"' + (disabled ? ' disabled' : '') + '>' + label + '</button>';
+  }
+  function row(key, title, description, button = '') {
+    return '<div class="list-row">' + icon(key) + '<div class="detail"><b>' + title +
+      '</b>' + (description ? '<small>' + description + '</small>' : '') + '</div>' + button + '</div>';
+  }
+  function moveRow(o) {
+    return row('home', 'Joyini o‘zgartirish', 'Xaritadan bo‘sh katak tanlang', action('Ko‘chirish', 'move', o.id, false, true));
+  }
+  function upgradeRow(o) {
+    if(!o || !data.caps[o.kind]) return '';
+    const rank=o.rank||1,q=model.quote(o);
+    return row('home',FarmWorld.kinds[o.kind]+' · Lv.'+rank,
+      rank===data.caps[o.kind]?'Eng yuqori daraja':(o.kind==='house'?'O‘yinchi':'Fermer uyi')+' Lv.'+q.gate+' · '+price(q.cost),
+      rank===data.caps[o.kind]?'':action('Yaxshilash','upgrade',o.id,!q.allowed));
+  }
+  function objectPanel(now) {
+    const o = model.object(objectId);
+    const building = data.buildings[o?.kind];
+    if (!building) return [FarmWorld.kinds[o?.kind] || 'Ferma uyi', o?.kind === 'rock' ?
+      '<p>Manzara bezagi. Joyini xarita muharririda o‘zgartirish mumkin.</p>' :
+      '<p>Vodiydagi fermangiz. Xaritani suring yoki ikki barmoq bilan kattalashtiring.</p>'];
+    const move = moveRow(o);
+    if (o.kind === 'field') {
+      if (!o.crop) {
+        let rows = '<p>Ekish uchun ombordan 1 dona urug‘ ishlatiladi.</p>';
+        for (const [key, crop] of Object.entries(data.crops)) {
+          const unlocked = model.level() >= crop.level;
+          rows += row(key, crop.name, unlocked ? model.quantity(key) + ' dona · ' + crop.duration + ' s' : crop.level + '-darajada ochiladi',
+            action('Ekish', 'plant', key, !unlocked || !model.quantity(key)));
+        }
+        if (Object.entries(data.crops).some(([key, crop]) => model.level() >= crop.level && !model.quantity(key))) {
+          rows += row('shop', 'Urug‘lar', 'Urug‘larni do‘kondan olishingiz mumkin.', action('Do‘kon', 'open', 'shop', false, true));
+        }
+        return [building.name, rows + move];
+      }
+      const crop = data.crops[o.crop];
+      const ready = o.ready <= now;
+      return [building.name, row(o.crop, crop.name, ready ? 'Hosil tayyor' : 'Pishishiga ' + timeString(o.ready - now),
+        action('Yig‘ish', 'harvest', o.id, !ready)) + move];
+    }
+    if (!building.output) return [building.name, '<p>' + building.description + '</p>' + move];
+    const ready = o.ready && o.ready <= now;
+    const animal = ['chicken', 'cow', 'sheep'].includes(o.kind);
+    return [building.name, row(building.output, data.items[building.output].name + ' ×' + building.count,
+      ready ? 'Mahsulot tayyor' : o.ready ? 'Qoldi ' + timeString(o.ready - now) :
+      itemList(building.recipe) + ' · ' + building.duration + ' s',
+      o.ready ? action('Olish', 'collect', o.id, !ready) :
+        action(animal ? 'Yem berish' : 'Tayyorlash', 'produce', o.id, !model.has(building.recipe))) + move];
+  }
+  function redrawPanel(now = Date.now()) {
+    if (!view) return;
+    let title = '';
+    let rows = '';
+    switch (view) {
+      case 'object':
+        [title, rows] = objectPanel(now);
+        rows += upgradeRow(model.object(objectId));
+        break;
+      case 'fields':
+        title = 'Dalalar';
+        const fields = state.objects.filter(o => o.kind === 'field');
+        for (const [index, o] of fields.entries()) {
+          const i = index + 1;
+          const ready = o.crop && now >= o.ready;
+          rows += row(o.crop || 'wheat', i + '-dala', o.crop ? (ready ? 'Pishdi' : timeString(o.ready - now)) : 'Bo‘sh yer',
+            ready ? action('Yig‘ish', 'harvest', o.id) : action(o.crop ? 'Ko‘rish' : 'Ekin ekish', 'inspect', o.id));
+        }
+        break;
+      case 'orders':
+        title = 'Buyurtmalar';
+        for (const order of data.orders) {
+          const unlocked = model.level() >= order.level;
+          const until = (state.orderReady[order.id] || 0) - now;
+          rows += row('orders', order.name + ' · ' + price(order.coins),
+            unlocked ? itemList(order.need) + ' · ' + order.xp + ' XP' : order.level + '-darajada ochiladi',
+            action(until > 0 ? timeString(until) : 'Topshirish', 'fulfill', order.id,
+              !unlocked || until > 0 || !model.has(order.need)));
+        }
+        break;
+      case 'barn':
+        title = 'Ombor'; rows+=upgradeRow(state.objects.find(o=>o.kind==='barn'));
+        rows += '<p>Band joy ' + model.used() + ' / ' + model.capacity + '</p>';
+        for (const [key, entry] of Object.entries(data.items)) {
+          if (model.quantity(key)) rows += row(key, entry.name + ' ×' + model.quantity(key), price(entry.sale) + ' / dona',
+            action('Sotish', 'sell', key));
+        }
+        if (!model.used()) rows += '<p>Ombor hozir bo‘sh.</p>';
+        break;
+      case 'shop':
+        title = 'Do‘kon';
+        const names=['Oddiy fermer','Usta dehqon','Bog‘bon','Vodiy sohibi'];
+        rows+='<h2>Fermer kiyimlari</h2>';
+        model.skinPrices.forEach((cost,i)=>{rows+=row('shop',names[i],state.skins.includes(i)?'Sizniki':price(cost),
+          action(state.skin===i?'Tanlangan':state.skins.includes(i)?'Kiyish':'Sotib olish','skin',i,state.skin===i||(!state.skins.includes(i)&&state.coins<cost)));});
+        rows += '<h2>Qurilish va bezak</h2>';
+        for (const [key, entry] of Object.entries(data.buildings)) {
+          const unlocked = model.level() >= entry.level;
+          rows += row(buildingIcon[key] || key, entry.name, unlocked ? price(entry.price) : entry.level + '-darajada ochiladi',
+            action('Tanlash', 'build', key, !unlocked || state.coins < entry.price));
+        }
+        rows += '<h2>Hududni kengaytirish</h2>';
+        data.expansions.forEach((entry, i) => {
+          const unlocked = model.level() >= entry.level;
+          const owned = state.zones[i + 1];
+          rows += row('home', entry.name, owned ? 'Sizning hududingiz' : unlocked ? price(entry.price) : entry.level + '-darajada ochiladi',
+            owned ? '' : action('Ochish', 'expand', i, !unlocked || state.coins < entry.price));
+        });
+        rows+=row('flowers','Tog‘ ko‘li','Qayiq va sohilni tomosha qiling',action('Xaritada ko‘rish','lake'));
+        rows += '<h2>Urug‘lar</h2>';
+        for (const [key, crop] of Object.entries(data.crops)) {
+          const unlocked = model.level() >= crop.level;
+          const cost = model.seedPrice(key);
+          rows += row(key, crop.name, unlocked ? (cost ? price(cost) : 'Boshlash uchun 1 dona bepul') : crop.level + '-darajada ochiladi',
+            action(cost ? 'Sotib olish' : 'Olish', 'seed', key, !unlocked || state.coins < cost));
+        }
+        break;
+/*admin-only*/      case 'admin':
+      case 'objects':
+      case 'manage-buildings':
+      case 'drafts':
+      case 'published':
+        [title, rows] = adminPanel(view);
+        break;
+/*end-admin*/      case 'settings':
+        title = 'Sozlamalar';
+        rows += row('home','Ferma profili','Shu telefonda alohida progress',action('Almashtirish','profile'));
+/*admin-only*/        rows += row('home', 'Admin', 'Mahalliy dunyo tahriri', action('Ochish', 'open', 'admin'));
+/*end-admin*/        rows += row('barn', 'Progress zaxirasi', 'Fermani JSON faylga saqlang yoki avvalgi zaxirani tiklang.') +
+          '<div class="draft-buttons">' + action('Eksport', 'backup-export', '', false, true) +
+          action('Import', 'backup-import', '', false, true) + '</div>';
+        rows += row('settings', 'Grafika', state.lowQuality ? 'Tejamkor' : 'Standart',
+          action(state.lowQuality ? 'Standart' : 'Tejamkor', 'quality'));
+        rows += row('settings', 'Ovoz effektlari', state.sound ? 'Yoqilgan' : 'O‘chirilgan',
+          action(state.sound ? 'O‘chirish' : 'Yoqish', 'sound'));
+        rows += row('settings', 'Animatsiya', reduceMotion.matches ? 'Qurilma harakatni kamaytiradi' : state.motion ? 'Yoqilgan' : 'O‘chirilgan',
+          action(state.motion ? 'O‘chirish' : 'Yoqish', 'motion', '', reduceMotion.matches));
+        if (surface.requestFullscreen || document.fullscreenElement) {
+          rows += row('home', 'Ekran', 'Vertikal yoki gorizontal ekran',
+            action(document.fullscreenElement ? 'Chiqish' : 'To‘liq ekran', 'fullscreen', '', false, true));
+        }
+        rows += row('orders', 'Yo‘riqnoma', 'Boshlang‘ich vazifalarni qayta ko‘rsatish',
+          action('Ko‘rsatish', 'tutorial', '', false, true));
+        rows += '<p style="margin-top:10px">O‘yin progressi shu brauzerda avtomatik saqlanadi.</p>';
+        break;
+    }
+    $('#panelTitle').textContent = title;
+    if (rows !== panelMarkup) {
+      const scroll = panelBody.scrollTop;
+      const focus = panelBody.contains(document.activeElement) ? document.activeElement.dataset : null;
+      panelBody.innerHTML = rows;
+      panelMarkup = rows;
+      panelBody.scrollTop = scroll;
+      if (focus?.action) {
+        const replacement = [...panelBody.querySelectorAll('button')].find(button =>
+          button.dataset.action === focus.action && button.dataset.value === focus.value);
+        replacement?.focus({ preventScroll: true });
+      }
+    }
+  }
+  function openView(next, id) {
+    view = next;
+    objectId = id;
+    panelBody.scrollTop = 0;
+    panel.hidden = false;
+    if (editorMode) editorBar.hidden = true;
+    redrawPanel();
+    for (const button of document.querySelectorAll('.dock button')) {
+      button.setAttribute('aria-current', String(button.dataset.view === next));
+    }
+    invalid = true;
+  }
+  function closePanel() {
+    view = objectId = null;
+    panel.hidden = true;
+    if (editorMode === 'edit') editorBar.hidden = false;
+    for (const button of document.querySelectorAll('.dock button')) button.removeAttribute('aria-current');
+    invalid = true;
+  }
+  function startPlacement(kind, id) {
+    const label = data.buildings[kind].name;
+    placement = { kind, id };
+    closePanel();
+    $('#buildHint').hidden = false;
+    $('#placementText').textContent = label + ' uchun yoritilgan bo‘sh joyni bosing.';
+    invalid = true;
+  }
+  function stopPlacement() {
+    placement = null;
+    $('#buildHint').hidden = true;
+    invalid = true;
+  }
+  function inspect(o, fromMap = false) {
+    if (o.kind === 'orders' || o.kind === 'barn') { openView(o.kind); return; }
+    if (fromMap && o.kind === 'field' && o.crop && Date.now() >= o.ready) {
+      if (result(model.harvest(o.id), 'collect')) { traveler.route(o,true,'harvest'); closePanel(); return; }
+    }
+    openView('object', o.id);
+  }
+  panelBody.addEventListener('click', async event => {
+    const button = event.target.closest('button[data-action]');
+    if (!button) return;
+    const { action: name, value } = button.dataset;
+    switch (name) {
+      case 'open': openView(value); break;
+/*admin-only*/      case 'management': management(state,editor); break;
+      case 'editor-open': enterEditor(); break;
+      case 'editor-new':
+        if (editor.active() && !window.confirm('Joriy tahrir o‘rniga fermadan yangi qoralama ochilsinmi?')) break;
+        editorFeedback(editor.reset());
+        enterEditor();
+        break;
+      case 'editor-tool':
+        enterEditor();
+        editor.choose(value === 'tree' || value === 'rock' ? value : FarmData.buildings[value]?.output || value === 'field' ? 'building' : 'decor');
+        editor.variant(value);
+        refreshEditor();
+        break;
+      case 'draft-load': {
+        if (editor.active() && !window.confirm('Saqlangan qoralama joriy tahrir o‘rniga ochilsinmi?')) break;
+        editorFeedback(editor.draftLoad(Number(value)));
+        enterEditor();
+        break;
+      }
+      case 'draft-delete':
+        if (window.confirm('Shu saqlangan qoralama o‘chirilsinmi?')) {
+          if (editor.draftDelete(Number(value))) redrawPanel();
+          else showNotice('Qoralamani o‘chirib bo‘lmadi.');
+        }
+        break;
+      case 'map-export':
+        editor.start();
+        download('farm-valley-xarita.json', editor.read());
+        break;
+      case 'map-import': chooseFile('map'); break;
+/*end-admin*/      case 'backup-export':
+        download('farm-valley-progress.json', { format: 'farm-valley-progress', version: 1, state: model.snapshot() });
+        break;
+      case 'backup-import': chooseFile('progress'); break;
+      case 'quality':
+        result(model.setting('lowQuality', !state.lowQuality));
+        resize();
+        break;
+      case 'inspect': inspect(model.object(Number(value))); break;
+      case 'plant': if (result(model.plant(objectId, value))) { traveler.route(model.object(objectId),true,'plant'); closePanel(); } break;
+      case 'harvest': if(result(model.harvest(Number(value)), 'collect'))traveler.route(model.object(Number(value)),true,'harvest'); break;
+      case 'produce': result(model.produce(objectId)); break;
+      case 'collect': result(model.collect(objectId), 'collect'); break;
+      case 'fulfill': result(model.fulfill(value), 'collect'); break;
+      case 'sell': result(model.sell(value)); break;
+      case 'profile': FarmProfiles.choose(); break;
+      case 'lake': { const p=art.project(28,19);cameraX=p.x;cameraY=p.y;saveCamera();closePanel();invalid=true;break; }
+      case 'upgrade': result(model.upgrade(Number(value))); break;
+      case 'skin': result(model.dress(Number(value))); break;
+      case 'seed': result(model.buySeed(value)); break;
+      case 'build': startPlacement(value); break;
+      case 'move': startPlacement(model.object(Number(value)).kind, Number(value)); break;
+      case 'expand': {
+        const i = Number(value);
+        if (result(model.expand(i), 'collect')) {
+          const p = art.project(data.expansions[i].x, data.expansions[i].y);
+          cameraX = p.x;
+          cameraY = p.y;
+          saveCamera();
+          closePanel();
+        }
+        break;
+      }
+      case 'sound': result(model.setting('sound', !state.sound)); break;
+      case 'motion': result(model.setting('motion', !state.motion)); break;
+      case 'tutorial': result(model.setting('lesson', 0)); closePanel(); break;
+      case 'fullscreen':
+        try {
+          if (document.fullscreenElement) await document.exitFullscreen();
+          else await surface.requestFullscreen();
+          redrawPanel();
+        } catch { showNotice('Brauzer to‘liq ekran rejimini ochmadi.'); }
+        break;
+    }
+  });
+  $('#lesson').addEventListener('click', e => {
+    if (e.target.closest('button')) result(model.setting('lesson', 4));
+  });
+  $('#close').onclick = closePanel;
+  $('#cancel').onclick = stopPlacement;
+  $('#settings').innerHTML = icon('settings');
+  $('#settings').onclick = () => {
+    stopPlacement();
+    if (view === 'settings') closePanel();
+    else openView('settings');
+  };
+  $('#home').innerHTML = icon('home');
+  $('#home').onclick = () => { cameraX = -12; cameraY = 229; zoom = 1; invalid = true; saveCamera(); };
+  for (const button of document.querySelectorAll('.dock button')) {
+    button.innerHTML = icon(button.dataset.icon) + button.textContent;
+    button.onclick = () => {
+      stopPlacement();
+      if (view === button.dataset.view) closePanel();
+      else openView(button.dataset.view);
+    };
+  }
+
+/*admin-only*/  function adminPanel(section) {
+    switch (section) {
+      case 'objects':
+        return ['Obyektlar kutubxonasi', ['tree', 'rock', 'flowers', 'fence'].map(kind =>
+          row(buildingIcon[kind] || 'flowers', FarmWorld.kinds[kind], '', action('Joylashtirish', 'editor-tool', kind))).join('')];
+      case 'manage-buildings':
+        return ['Binolarni boshqarish', '<p>Yangi bino uchun turini tanlang. Mavjud binoni ko‘chirish uchun muharrirda Tanlash vositasidan foydalaning.</p>' +
+          Object.keys(data.buildings).filter(kind => !['flowers', 'fence', 'tree'].includes(kind)).map(kind =>
+            row(buildingIcon[kind] || kind, FarmWorld.kinds[kind], '', action('Joylashtirish', 'editor-tool', kind))).join('')];
+      case 'drafts':
+        return ['Qoralamalar', '<form class="draft-form"><input name="draftName" required maxlength="48" aria-label="Qoralama nomi" placeholder="Qoralama nomi"><button class="action">Saqlash</button></form>' +
+          '<div class="draft-buttons">' + action('JSON eksport', 'map-export', '', false, true) +
+          action('JSON import', 'map-import', '', false, true) +
+          action('Yangi qoralama', 'editor-new', '', false, true) + '</div>' +
+          (editor.drafts().map((name, index) => row('orders', name, 'Shu brauzerda', '<div class="draft-row-actions">' +
+            action('Yuklash', 'draft-load', index) + action('O‘chirish', 'draft-delete', index, false, true) + '</div>')).join('') || '<p>Nomlangan qoralamalar yo‘q.</p>')];
+      case 'published':
+        return ['Nashr etilgan xaritalar', '<p>Muharrirdagi o‘zgarishlarni avval fermaga qo‘llang. So‘ng serverda nashr qiling.</p>' +
+          action('Nashr boshqaruvi', 'management')];
+      default:
+        return ['Ferma boshqaruvi', '<p>Dashboard · Daraja ' + model.level() + ' · ' + state.objects.length + ' obyekt · ' +
+          editor.drafts().length + ' qoralama</p><p>Xarita qoralamalari shu brauzerda saqlanadi. Kirish GitHub hisobi orqali tasdiqlandi.</p>' +
+          row('settings','Server sozlamalari','Balans, nashr va o‘yinchilar',action('Ochish','management')) +
+          row('home', 'Xarita muharriri', 'Yer, binolar va bezaklar', action('Ochish', 'editor-open')) +
+          row('flowers', 'Obyektlar kutubxonasi', '', action('Ochish', 'open', 'objects')) +
+          row('barn', 'Binolarni boshqarish', '', action('Ochish', 'open', 'manage-buildings')) +
+          row('orders', 'Qoralamalar', '', action('Ochish', 'open', 'drafts')) +
+          row('home', 'Nashr etilgan xaritalar', '', action('Ochish', 'open', 'published')) +
+          row('settings', 'O‘yin sozlamalari', '', action('Ochish', 'open', 'settings'))];
+    }
+  }
+/*end-admin*/  function download(name, data) {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' }));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = name;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+  }
+  function chooseFile(purpose) {
+    filePurpose = purpose;
+    jsonFile.value = '';
+    jsonFile.click();
+  }
+  jsonFile.addEventListener('change', async () => {
+    const file = jsonFile.files[0];
+    const purpose = filePurpose;
+    if (!file) return;
+    try {
+      if (file.size > 2000000) throw Error('JSON fayl 2 MB dan kichik bo‘lishi kerak.');
+      const value = JSON.parse(await file.text());
+/*admin-only*/      if (purpose === 'map') {
+        FarmWorld.parseDraft(value);
+        if (editor.active() && !window.confirm('Import joriy tahrir o‘rniga ochilsinmi?')) return;
+        const saved = editor.import(value);
+        enterEditor();
+        editorFeedback(saved);
+        if (saved) showNotice('Xarita qoralama sifatida ochildi.');
+      } else /*end-admin*/if (purpose === 'progress') {
+        if (value?.format !== 'farm-valley-progress' || value.version !== 1) throw Error('Farm Valley progress zaxirasi kerak.');
+        FarmSave.parse(value.state);
+        if (!window.confirm('Joriy progress zaxiradagi progress bilan almashtirilsinmi?')) return;
+        if (result(model.restore(value.state))) {
+          ({ x: cameraX, y: cameraY, zoom } = state.camera);
+          stopPlacement();
+          closePanel();
+          resize();
+        }
+      }
+    } catch (error) {
+      showNotice(error instanceof SyntaxError ? 'JSON faylni o‘qib bo‘lmadi.' : error.message);
+    }
+  });
+/*admin-only*/  panelBody.addEventListener('submit', event => {
+    if (!event.target.matches('.draft-form')) return;
+    event.preventDefault();
+    editor.start();
+    const message = editor.draftSave(new FormData(event.target).get('draftName'));
+    showNotice(message || 'Qoralama saqlandi.');
+    if (!message) {
+      event.target.reset();
+      redrawPanel();
+    }
+  });
+  function editorFeedback(saved) {
+    if (saved === false) showNotice('Qoralamani brauzerda saqlab bo‘lmadi. JSON eksportdan foydalaning.');
+  }
+  function refreshEditor() {
+    const scroll = editorBar.querySelector('.editor-tools')?.scrollLeft ?? 0;
+    const actionScroll = editorBar.querySelector('.editor-actions')?.scrollLeft ?? 0;
+    editorBar.innerHTML = editor.toolbar();
+    editorBar.querySelector('.editor-tools').scrollLeft = scroll;
+    editorBar.querySelector('.editor-actions').scrollLeft = actionScroll;
+    invalid = true;
+  }
+  function setEditorMode(mode) {
+    editorMode = mode;
+    surface.classList.toggle('editing', Boolean(mode));
+    surface.classList.toggle('previewing', mode === 'preview');
+    $('#editorTop').hidden = mode !== 'edit';
+    $('#previewBack').hidden = mode !== 'preview';
+    editorBar.hidden = mode !== 'edit' || !panel.hidden;
+    if (mode === 'edit') refreshEditor();
+    invalid = true;
+  }
+  function enterEditor() {
+    editor.start();
+    stopPlacement();
+    closePanel();
+    setEditorMode('edit');
+  }
+  function exitEditor() {
+    setEditorMode(null);
+    ({ x: cameraX, y: cameraY, zoom } = state.camera);
+    constrain();
+    openView('admin');
+  }
+  $('#editorBack').onclick = exitEditor;
+  $('#previewBack').onclick = () => setEditorMode('edit');
+  editorBar.addEventListener('change', event => {
+    if (event.target.matches('select')) editor.variant(event.target.value);
+  });
+  editorBar.addEventListener('click', event => {
+    const button = event.target.closest('button');
+    if (!button || gesture) return;
+    if (button.dataset.tool) {
+      editor.choose(button.dataset.tool);
+      refreshEditor();
+      return;
+    }
+    switch (button.dataset.editor) {
+      case 'undo': editorFeedback(editor.undo()); break;
+      case 'redo': editorFeedback(editor.redo()); break;
+      case 'move': editor.moving(); break;
+      case 'remove': {
+        editor.begin();
+        const message = editor.remove();
+        if (message) showNotice(message);
+        editorFeedback(editor.finish());
+        break;
+      }
+      case 'preview': setEditorMode('preview'); return;
+      case 'drafts': openView('drafts'); return;
+      case 'apply':
+        try { FarmWorld.checkDraft(FarmWorld.parseDraft(editor.read()), state); }
+        catch (error) { showNotice(error.message); return; }
+        if (window.confirm('Bu xarita shu brauzerdagi fermaga qo‘llansinmi? Qoralamada o‘chirilgan bo‘sh obyektlar fermadan ham olib tashlanadi.')) {
+          if (result(model.applyDraft(editor.read()))) {
+            editorFeedback(editor.clearWorking());
+            exitEditor();
+          }
+        }
+        break;
+    }
+    refreshEditor();
+  });
+  function editGrid(land, v, w) {
+    for (let y = FarmWorld.min; y <= FarmWorld.max; y++) for (let x = FarmWorld.min; x <= FarmWorld.max; x++) {
+      const p = art.project(x, y);
+      if (p.x < v.x - art.TX || p.x > w.x + art.TX || p.y < v.y - art.TY || p.y > w.y + art.TY) continue;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      const active = FarmWorld.open(land, state.zones, x, y);
+      art.tile(ctx, active ? '#f9f5c408' : '#253f3525', 1, active ? '#ffffd980' : '#e3e4bd57');
+      ctx.restore();
+    }
+  }
+
+/*end-admin*/  function resize() {
+    if (gesture?.painting) editor.cancel();
+    if (gesture) {
+      gesture = null;
+      pointers.clear();
+    }
+    width = canvas.clientWidth;
+    height = canvas.clientHeight;
+    const pixels = state.lowQuality ? 680000 : 1600000;
+    density = Math.min(window.devicePixelRatio || 1, state.lowQuality ? 1 : 1.45,
+      Math.sqrt(pixels / Math.max(1, width * height)));
+    canvas.width = Math.round(width * density);
+    canvas.height = Math.round(height * density);
+    baseZoom = Math.max(.39, Math.min(1.9, width / 660, height / 390));
+    constrain();
+    invalid = true;
+  }
+  function world(x, y) {
+    const scale = baseZoom * zoom;
+    return { x: (x - width / 2) / scale + cameraX, y: (y - height / 2) / scale + cameraY };
+  }
+  function constrain() {
+
+    cameraX = Math.max(-2115, Math.min(2115, cameraX));
+    cameraY = Math.max(-70, Math.min(2256,cameraY));
+  }
+  function zoomAt(multiplier, x, y, targetX = x, targetY = y) {
+    const old = world(x, y);
+    zoom = Math.max(.68, Math.min(2.45, zoom * multiplier));
+    const current = world(targetX, targetY);
+    cameraX += old.x - current.x;
+    cameraY += old.y - current.y;
+    constrain();
+    invalid = true;
+  }
+  function saveCamera() {
+    if (!editorMode) model.setCamera(cameraX, cameraY, zoom);
+  }
+  $('#plus').onclick = () => { zoomAt(1.23, width / 2, height / 2); saveCamera(); };
+  $('#minus').onclick = () => { zoomAt(1 / 1.23, width / 2, height / 2); saveCamera(); };
+  function coordinates(event) {
+    const rect = canvas.getBoundingClientRect();
+    return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+  }
+  function pair() {
+    const [a, b] = [...pointers.values()];
+    return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2, gap: Math.max(8, Math.hypot(a.x - b.x, a.y - b.y)) };
+  }
+  function targetAt(hit, grid, objects) {
+    // Check the visible upper part of a building in foreground-to-background order.
+    return [...objects].reverse().find(o => {
+      const p = art.project(o.x, o.y);
+      const dx = Math.abs(hit.x - p.x);
+      const dy = p.y - hit.y;
+      const nameHeight = art.badgeHeight(o.kind);
+      if (!['field', 'flowers', 'fence', 'rock'].includes(o.kind)) {
+        return (dx < 36 && dy > 8 && dy < nameHeight + 11) || (o.x === grid.x && o.y === grid.y);
+      }
+      return o.x === grid.x && o.y === grid.y;
+    });
+  }
+  function tap(x, y) {
+    const hit = world(x, y);
+    const grid = art.inverse(hit.x, hit.y);
+    if (placement) {
+      const change = placement.id ? model.move(placement.id, grid.x, grid.y) : model.build(placement.kind, grid.x, grid.y);
+      if (result(change)) stopPlacement();
+      return;
+    }
+    const target = targetAt(hit, grid, sortedObjects);
+    if (target) { traveler.route(target,true); inspect(target, true); return; }
+    const zone = data.zone(grid.x, grid.y);
+    if (zone > 0 && !FarmWorld.open(state.landscape, state.zones, grid.x, grid.y)) {
+      openView('shop');
+      const label = data.expansions[zone - 1];
+      [...panelBody.querySelectorAll('h2')].find(h => h.textContent === 'Hududni kengaytirish')?.scrollIntoView({ block: 'start' });
+      showNotice(label.name + ' · ' + label.level + '-daraja');
+      return;
+    }
+    traveler.route(grid);
+    closePanel();
+  }
+/*admin-only*/  function editorPoint(point) {
+    const hit = world(point.x, point.y);
+    return art.inverse(hit.x, hit.y);
+  }
+  function applyBrush(point) {
+    const base = editorPoint(point);
+    const target = editor.tool() === 'select' && !editor.isMoving() &&
+      targetAt(world(point.x, point.y), base, [...editor.read().objects].sort((a, b) => a.x + a.y - b.x - b.y));
+    const { x, y } = target || base;
+    const key = FarmWorld.key(x, y);
+    if (gesture.lastCell === key) return;
+    gesture.lastCell = key;
+    const message = editor.edit(x, y);
+    if (message && !gesture.warned) {
+      showNotice(message);
+      gesture.warned = true;
+    }
+    invalid = true;
+  }
+  function brushLine(from, to) {
+    const steps = Math.max(1, Math.ceil(Math.hypot(to.x - from.x, to.y - from.y) / (baseZoom * zoom * 8)));
+    for (let i = 1; i <= steps; i++) {
+      applyBrush({ x: from.x + (to.x - from.x) * i / steps, y: from.y + (to.y - from.y) * i / steps });
+    }
+  }
+/*end-admin*/  canvas.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse' && e.button !== 0 || editorMode && !panel.hidden) return;
+    const point = coordinates(e);
+    pointers.set(e.pointerId, point);
+    canvas.setPointerCapture(e.pointerId);
+    if (pointers.size === 1) {
+      gesture = { origin: point, last: point, moved: false, pinch: false,
+        brush: editorMode === 'edit' && editor.brush(), painting: false };
+    } else {
+      if (gesture.painting) editor.cancel();
+      gesture.painting = false;
+      gesture.pinch = true;
+      gesture.moved = true;
+      gesture.pair = pair();
+      invalid = true;
+    }
+  });
+  canvas.addEventListener('pointermove', e => {
+    if (!pointers.has(e.pointerId)) return;
+    const point = coordinates(e);
+    pointers.set(e.pointerId, point);
+    if (pointers.size >= 2) {
+      const next = pair();
+      const old = gesture.pair;
+      zoomAt(next.gap / old.gap, old.x, old.y, next.x, next.y);
+      gesture.pair = next;
+      return;
+    }
+    if (!gesture.moved && Math.hypot(point.x - gesture.origin.x, point.y - gesture.origin.y) >= 7) gesture.moved = true;
+    if (!gesture.moved) return;
+    if (gesture.brush && !gesture.pinch) {
+      if (!gesture.painting) {
+        editor.begin();
+        gesture.painting = true;
+        applyBrush(gesture.origin);
+      }
+      brushLine(gesture.last, point);
+    } else if (editorMode !== 'edit' || editor.tool() === 'pan' || gesture.pinch) {
+      const scale = baseZoom * zoom;
+      cameraX -= (point.x - gesture.last.x) / scale;
+      cameraY -= (point.y - gesture.last.y) / scale;
+      constrain();
+      invalid = true;
+    }
+    gesture.last = point;
+  });
+  function endPointer(e) {
+    if (!pointers.has(e.pointerId)) return;
+    const point = coordinates(e);
+    const final = pointers.size === 1;
+    const up = e.type === 'pointerup';
+    const wasTap = up && final && !gesture.moved &&
+      Math.hypot(point.x - gesture.origin.x, point.y - gesture.origin.y) < 7;
+    if (final && gesture.painting) {
+      if (up) {
+        brushLine(gesture.last, point);
+        editorFeedback(editor.finish());
+      } else editor.cancel();
+      refreshEditor();
+    } else if (wasTap && editorMode === 'edit' && editor.tool() !== 'pan') {
+      editor.begin();
+      applyBrush(point);
+      editorFeedback(editor.finish());
+      refreshEditor();
+    } else if (wasTap && !editorMode) tap(point.x, point.y);
+    pointers.delete(e.pointerId);
+    if (pointers.size === 1) {
+      gesture.last = pointers.values().next().value;
+      gesture.moved = true;
+    } else if (pointers.size > 1) gesture.pair = pair();
+    else {
+      gesture = null;
+      saveCamera();
+    }
+  }
+  canvas.addEventListener('pointerup', endPointer);
+  canvas.addEventListener('pointercancel', endPointer);
+  canvas.addEventListener('lostpointercapture', endPointer);
+  canvas.addEventListener('wheel', event => {
+    event.preventDefault();
+    const p = coordinates(event);
+    zoomAt(event.deltaY < 0 ? 1.13 : 1 / 1.13, p.x, p.y);
+    saveCamera();
+  }, { passive: false });
+  document.addEventListener('keydown', event => {
+    if (event.key !== 'Escape') return;
+    if (placement) stopPlacement();
+    else if (view) closePanel();
+    else if (editorMode === 'preview') setEditorMode('edit');
+    else if (editorMode) exitEditor();
+  });
+
+  // Keep locked areas as two polygons. Draw individual squares only while placing objects.
+  function groundOverlay() {
+    const lockedAreas = [[10, 2, 13, 9], [2, 10, 9, 13]];
+    for (const [i, [x0, y0, x1, y1]] of lockedAreas.entries()) {
+      if (state.zones[i + 1]) continue;
+      const opened = state.landscape.areas.some(cell => {
+        const [x, y] = cell.split(',').map(Number);
+        return data.zone(x, y) === i + 1;
+      });
+      if (opened) {
+        for (let y = y0; y <= y1; y++) for (let x = x0; x <= x1; x++) {
+          if (FarmWorld.open(state.landscape, state.zones, x, y)) continue;
+          const p = art.project(x, y);
+          ctx.save();
+          ctx.translate(p.x, p.y);
+          art.tile(ctx, '#43594328', 1, '#45604139');
+          ctx.restore();
+        }
+        continue;
+      }
+      ctx.beginPath();
+      for (const [corner, [x, y]] of [[x0-.5,y0-.5],[x1+.5,y0-.5],[x1+.5,y1+.5],[x0-.5,y1+.5]].entries()) {
+        const p = art.project(x, y);
+        if (corner) ctx.lineTo(p.x, p.y);
+        else ctx.moveTo(p.x, p.y);
+      }
+      ctx.closePath();
+      ctx.fillStyle = '#43594328';
+      ctx.fill();
+      ctx.strokeStyle = '#45604139';
+      ctx.stroke();
+    }
+    if (!placement) return;
+    for (let y = FarmWorld.min; y <= FarmWorld.max; y++) for (let x = FarmWorld.min; x <= FarmWorld.max; x++) {
+      if (!model.isFree(x, y)) continue;
+      const p = art.project(x,y);
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      art.tile(ctx,'#f0e8a840',.88,'#f5f2b6d9');
+      ctx.restore();
+    }
+  }
+  function paint(now, motion) {
+    const scale = baseZoom * zoom;
+    ctx.setTransform(density, 0, 0, density, 0, 0);
+    ctx.scale(scale, scale);
+    ctx.translate(width / (2 * scale) - cameraX, height / (2 * scale) - cameraY);
+    ctx.imageSmoothingEnabled = true;
+    const v = world(0, 0), w = world(width, height);
+    if (v.x < -990 || v.y < -175 || w.x > 990 || w.y > 995) {
+      ctx.fillStyle = groundTexture || '#8daa55';
+      ctx.fillRect(v.x, v.y, w.x - v.x, w.y - v.y);
+    }
+    ctx.drawImage(terrain.canvas, -990, -175);
+
+    const map = editorMode && editor.read();
+    const land = map ? map.landscape : state.landscape;
+    const objects = map ? map.objects.map(o => ({ ...model.object(o.id), ...o }))
+      .sort((a, b) => a.x + a.y - b.x - b.y) : sortedObjects;
+
+    const occupied = new Set([...land.areas, ...objects.map(o => FarmWorld.key(o.x, o.y))]);
+    Village.outskirts(ctx,v,w,land,occupied);
+    Village.shore(ctx,v,w);
+    art.drawLand(ctx, land, v, w);
+    art.drawScenery(ctx, terrain.scenery, land, occupied, v, w);
+    if (!editorMode) groundOverlay();
+    if (editorMode === 'edit') editGrid(land, v, w);
+    const editorSelection = editorMode === 'edit' ? editor.target()?.id : null;
+    const teach = editorMode ? null : state.lesson === 0 ? sortedObjects.find(o => o.kind === 'field' && o.x === 4 && o.y === 5)
+      : state.lesson === 1 ? sortedObjects.find(o => o.kind === 'field' && o.crop)
+      : state.lesson === 2 ? sortedObjects.find(o => o.kind === 'orders') : null;
+    for (const o of objects) {
+      const p = art.project(o.x, o.y);
+      if (p.x < v.x - 50 || p.x > w.x + 50 || p.y < v.y - 24 || p.y > w.y + 88) continue;
+      if (editorSelection === o.id || o.id === objectId || teach?.id === o.id) {
+        ctx.save();
+        ctx.translate(p.x,p.y);
+        art.tile(ctx,'#f9eb7d37',1.02,'#f9efae');
+        ctx.restore();
+      }
+      art.drawObject(ctx,o,now,motion);
+    }
+    if (editorMode) return;
+    const travelerPos=traveler.position(now), foot=art.project(travelerPos.x,travelerPos.y);
+    ctx.save();ctx.translate(foot.x,foot.y);
+    if(travelerPos.task && motion){
+      const a=(Math.sin(now/110)+1)/2;
+      ctx.rotate(.16+a*.14);
+      if(travelerPos.task==='plant'){
+        for(let i=0;i<3;i++)art.oval(ctx,6+i*2+a*7,-7+a*5,1.2,.7,'#e6bb69');
+      }else{
+        art.line(ctx,[[4,-12],[12+a*5,-6+a*4]],'#875f3c',1.5);
+        art.line(ctx,[[12+a*5,-6+a*4],[15+a*5,-8+a*4],[16+a*5,-11+a*4]],'#d6d6b8',1.5);
+      }
+    }
+    Village.sprite(ctx,3,state.skin,0,-travelerPos.bob,34,37);ctx.restore();
+    for (const o of objects) {
+      const p = art.project(o.x, o.y);
+      if (p.x < v.x - 48 || p.x > w.x + 48 || p.y < v.y - 28 || p.y > w.y + 92) continue;
+      const ready = o.ready && now >= o.ready;
+      const quest = teach?.id === o.id;
+      let label = ready ? (o.kind === 'field' ? 'Hosil' : 'Tayyor') : '';
+      if (!label && quest) label = state.lesson === 0 ? 'Bu yerga eking' : state.lesson === 1 ? timeString(o.ready - now) : 'Buyurtmalar';
+      if (!label && !placement && scale > .57 && o.kind !== 'field' && data.buildings[o.kind]?.output) {
+        label = o.ready ? timeString(o.ready - now) : data.buildings[o.kind].name;
+      }
+      if (label) art.marker(ctx,p.x,p.y - art.badgeHeight(o.kind),label,Boolean(ready || quest));
+    }
+    if (!placement) data.expansions.forEach((entry,i) => {
+      if (FarmWorld.open(state.landscape, state.zones, entry.x, entry.y)) return;
+      const p = art.project(entry.x,entry.y);
+      art.marker(ctx,p.x,p.y - 13,entry.level + '-daraja');
+    });
+  }
+  function frame(time) {
+    requestAnimationFrame(frame);
+    if (document.hidden) return;
+    const now = Date.now();
+    const second = Math.floor(now / 1000);
+    if (second !== lastSecond) {
+      lastSecond = second;
+      redrawPanel(now);
+      invalid = true;
+    }
+    const motion = state.motion && !reduceMotion.matches && !state.lowQuality && editorMode !== 'edit';
+    if (!invalid && (!motion || time - lastFrame < 32)) return;
+    invalid = false;
+    lastFrame = time;
+    paint(now,motion);
+  }
+  window.addEventListener('resize', resize);
+  document.addEventListener('fullscreenchange', () => { resize(); redrawPanel(); });
+  function saveOnExit() {
+    saveCamera();
+    model.save();
+  }
+  window.addEventListener('pagehide', saveOnExit);
+  document.addEventListener('visibilitychange', () => { if (document.hidden) saveOnExit(); });
+  rebuildOrder();
+  resize();
+  refreshHUD();
+  if (model.store.recovered) {
+    model.save();
+    showNotice('Oldingi saqlangan progress tiklandi.');
+  } else if (model.store.damaged) showNotice('Saqlangan progressni o‘qib bo‘lmadi. Zaxira faylini import qilishingiz mumkin.');
+  /*admin-only*/openView('admin');/*end-admin*/
+  requestAnimationFrame(frame);
+})();
+</script></body>
+</html>
