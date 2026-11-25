@@ -1,0 +1,23 @@
+{
+  "framework": null,
+  "outputDirectory": "dist",
+  "buildCommand": "node build.js",
+  "rewrites": [
+    {
+      "source": "/admin",
+      "destination": "/api/farm?route=admin"
+    },
+    {
+      "source": "/api/admin",
+      "destination": "/api/farm?route=admin"
+    },
+    {
+      "source": "/api/world",
+      "destination": "/api/farm?route=world"
+    },
+    {
+      "source": "/api/visit",
+      "destination": "/api/farm?route=visit"
+    }
+  ]
+}
